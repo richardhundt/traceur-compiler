@@ -1,8 +1,8 @@
-// Options: --private-names
+// Options: --symbols
 
-import Name from '@name';
+import {Symbol} from '@name';
 
-var n = new Name;
+var n = Symbol();
 var p = {};
 Object.defineProperty(p, n, {
   get: function() {

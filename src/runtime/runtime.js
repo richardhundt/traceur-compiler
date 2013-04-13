@@ -90,59 +90,76 @@
 
   var nameRe = /^__\$(?:\d+)\$(?:\d+)\$__$/;
 
-  var internalStringValueName = newUniqueString();
+  var symbolInternalProperty = newUniqueString();
+  var symbolNameProperty = newUniqueString();
+  var symbolValueProperty = newUniqueString();
 
   /**
-   * Creates a new private name object.
+   * Creates a new private symbol object.
    * @param {string=} string Optional string used for toString.
    * @constructor
    */
-  function Name(string) {
-    if (!string)
-      string = newUniqueString();
-    $defineProperty(this, internalStringValueName, {value: newUniqueString()});
+  function Symbol(name) {
+    var value = new SymbolValue(name);
+    if (!(this instanceof Symbol))
+      return value;
 
-    function toString() {
-      return string;
+    $defineProperty(this, symbolValueProperty, {value: value});
+    $defineProperty(this, symbolNameProperty, {value: value.name});
+  }
+  Symbol.prototype = {
+    get name() {
+      return this[symbolNameProperty];
+    },
+    toString: function() {
+      throw TypeError('Conversion from symbol to string');
+    },
+    valueOf: function() {
+      // This is not entirely correct but it is better than returning null (as
+      // V8 does) for `symbol + ''`
+      if (isSymbol(this))
+        throw TypeError('Conversion from symbol to string');
+      return this[symbolValueProperty];
     }
-    $freeze(toString);
-    $freeze(toString.prototype);
-    var toStringDescr = method(toString);
-    $defineProperty(this, 'toString', toStringDescr);
-
-    this.public = $freeze($create(null, {
-      toString: method($freeze(function toString() {
-        return string;
-      }))
-    }));
-    $freeze(this.public.toString.prototype);
-
-    $freeze(this);
   };
-  $freeze(Name);
-  $freeze(Name.prototype);
+  $defineProperty(Symbol.prototype, 'name', {enumerable: false});
+  $defineProperty(Symbol.prototype, 'toString', {enumerable: false});
+  $defineProperty(Symbol.prototype, 'valueOf', {enumerable: false});
 
-  function assertName(val) {
-    if (!NameModule.isName(val))
-      throw new TypeError(val + ' is not a Name');
+  function SymbolValue(name) {
+    $defineProperty(this, symbolInternalProperty, {value: newUniqueString()});
+    $defineProperty(this, symbolNameProperty, {value: name || ''});
+    $freeze(this);
+  }
+  SymbolValue.prototype = Symbol.prototype;
+  $freeze(SymbolValue.prototype);
+
+  function isSymbol(symbol) {
+    return symbol && $hasOwnProperty.call(symbol, symbolInternalProperty);
+  }
+
+  function assertSymbol(val) {
+    if (!isSymbol(val))
+      throw new TypeError(val + ' is not a Symbol');
     return val;
+  }
+
+  function typeOf(v) {
+    if (isSymbol(v))
+      return 'symbol';
+    return typeof v;
   }
 
   // Private name.
 
   // Collection getters and setters
-  var elementDeleteName = new Name();
-  var elementGetName = new Name();
-  var elementSetName = new Name();
+  var elementDeleteName = Symbol();
+  var elementGetName = Symbol();
+  var elementSetName = Symbol();
 
   // HACK: We should use runtime/modules/std/name.js or something like that.
-  var NameModule = $freeze({
-    Name: function(str) {
-      return new Name(str);
-    },
-    isName: function(x) {
-      return x instanceof Name;
-    },
+  var SymbolModule = $freeze({
+    Symbol: Symbol,
     elementGet: elementGetName,
     elementSet: elementSetName,
     elementDelete: elementDeleteName
@@ -157,10 +174,10 @@
     });
   }
 
-  // Override Object.prototpe.hasOwnProperty to always return false for
+  // Override Object.prototype.hasOwnProperty to always return false for
   // private names.
   function hasOwnProperty(name) {
-    if (NameModule.isName(name) || nameRe.test(name))
+    if (isSymbol(name) || nameRe.test(name))
       return false;
     return $hasOwnProperty.call(this, name);
   }
@@ -202,27 +219,27 @@
   }
 
   function deleteProperty(object, name) {
-    if (NameModule.isName(name))
-      return delete object[name[internalStringValueName]];
+    if (isSymbol(name))
+      return delete object[name[symbolInternalProperty]];
     if (nameRe.test(name))
       return true;
     return delete object[name];
   }
 
   function getProperty(object, name) {
-    if (NameModule.isName(name))
-      return object[name[internalStringValueName]];
+    if (isSymbol(name))
+      return object[name[symbolInternalProperty]];
     if (nameRe.test(name))
       return undefined;
     return object[name];
   }
 
   function hasPrivateNameProperty(object, name) {
-    return name[internalStringValueName] in Object(object);
+    return name[symbolInternalProperty] in Object(object);
   }
 
   function has(object, name) {
-    if (NameModule.isName(name) || nameRe.test(name))
+    if (isSymbol(name) || nameRe.test(name))
       return false;
     return name in Object(object);
   }
@@ -230,13 +247,13 @@
   // This is a bit simplistic.
   // http://wiki.ecmascript.org/doku.php?id=strawman:refactoring_put#object._get_set_property_built-ins
   function setProperty(object, name, value) {
-    if (NameModule.isName(name)) {
+    if (isSymbol(name)) {
       var descriptor = $getPropertyDescriptor(object,
-                                              [name[internalStringValueName]]);
+                                              [name[symbolInternalProperty]]);
       if (descriptor)
-        object[name[internalStringValueName]] = value;
+        object[name[symbolInternalProperty]] = value;
       else
-        $defineProperty(object, name[internalStringValueName], nonEnum(value));
+        $defineProperty(object, name[symbolInternalProperty], nonEnum(value));
     } else {
       assertNotName(name);
       object[name] = value;
@@ -244,14 +261,14 @@
   }
 
   function defineProperty(object, name, descriptor) {
-    if (NameModule.isName(name)) {
+    if (isSymbol(name)) {
       // Private names should never be enumerable.
       if (descriptor.enumerable) {
         descriptor = Object.create(descriptor, {
           enumerable: {value: false}
         });
       }
-      $defineProperty(object, name[internalStringValueName], descriptor);
+      $defineProperty(object, name[symbolInternalProperty], descriptor);
     } else {
       assertNotName(name);
       $defineProperty(object, name, descriptor);
@@ -269,7 +286,7 @@
   }
 
   function getPropertyDescriptor(obj, name) {
-    if (NameModule.isName(name))
+    if (isSymbol(name))
       return undefined;
     assertNotName(name);
     return $getPropertyDescriptor(obj, name);
@@ -301,7 +318,7 @@
   }
 
   // Iterators.
-  var iteratorName = new Name('iterator');
+  var iteratorName = Symbol('iterator');
 
   var IterModule = {
     get iterator() {
@@ -489,7 +506,7 @@
 
   var modules = $freeze({
     get '@name'() {
-      return NameModule;
+      return SymbolModule;
     },
     get '@iter'() {
       return IterModule;
@@ -520,8 +537,8 @@
     setStopIteration: setStopIteration,
     isStopIteration: isStopIteration,
     addIterator: addIterator,
-    assertName: assertName,
-    createName: NameModule.Name,
+    assertSymbol: assertSymbol,
+    createSymbol: SymbolModule.Symbol,
     deleteProperty: deleteProperty,
     elementDelete: elementDelete,
     elementGet: elementGet,
@@ -533,6 +550,7 @@
     setupGlobals: setupGlobals,
     has: has,
     modules: modules,
+    typeof: typeOf
   };
 
   // This file is sometimes used without traceur.js.

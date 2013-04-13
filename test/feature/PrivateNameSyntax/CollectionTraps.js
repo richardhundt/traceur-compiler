@@ -1,4 +1,4 @@
-// Options: --modules --private-names --private-name-syntax --trap-member-lookup
+// Options: --modules --symbols --private-name-syntax --trap-member-lookup
 
 import {elementGet, elementSet} from '@name';
 private @elementGet = elementGet, @elementSet = elementSet;

@@ -1,37 +1,15 @@
-// Options: --private-names
+// Options: --symbols
 
-function assertFrozen(obj) {
-  assertTrue(Object.isFrozen(obj));
-}
+import {Symbol} from '@name';
 
-function assertNameFrozen(n) {
-  [
-    n,
-    n.toString,
-    n.toString.prototype,
-    n.public,
-    n.public.toString,
-    n.public.toString.prototype
-  ].forEach(assertFrozen);
-}
+var s1 = new Symbol;
+assertTrue(s1 instanceof Symbol);
+assertEquals(typeof s1, 'object');
 
-import {Name, isName} from '@name';
+var s2 = Symbol();
+// This fails because we cannot provide a new primitive type
+// assertFalse(s2 instanceof Symbol);
+assertEquals(typeof s2, 'symbol');
 
-var n = new Name;
-assertTrue(isName(n));
-assertFalse(isName(n.public));
-assertEquals('object', typeof n.public);
-assertNotEquals(n, n.public);
-assertFalse(isName(n.public));
-assertEquals(n + '', n.public + '');
-assertNameFrozen(n);
-
-var n2 = new Name('abc');
-assertTrue(isName(n2));
-assertFalse(isName(n2.public));
-assertEquals('object', typeof n2.public);
-assertNotEquals(n2, n2.public);
-assertFalse(isName(n2.public));
-assertEquals(n2 + '', n2.public + '');
-assertEquals('abc', n2.public + '');
-assertNameFrozen(n2);
+var s2 = Symbol('abc');
+assertTrue(s2.name === 'abc');

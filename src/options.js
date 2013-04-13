@@ -261,7 +261,7 @@ addFeatureOption('modules', ON_BY_DEFAULT);    // 14
 // EXPERIMENTAL
 addFeatureOption('blockBinding', EXPERIMENTAL);       // 12.1
 addFeatureOption('privateNameSyntax', EXPERIMENTAL);
-addFeatureOption('privateNames', EXPERIMENTAL);
+addFeatureOption('symbols', EXPERIMENTAL);
 addFeatureOption('cascadeExpression', EXPERIMENTAL);
 addFeatureOption('trapMemberLookup', EXPERIMENTAL);
 addFeatureOption('deferredFunctions', EXPERIMENTAL);

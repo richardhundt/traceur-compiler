@@ -1,4 +1,4 @@
 import * from '@name';
 
-var n1 = new Name();
-assertTrue(isName(n1));
+var s1 = new Symbol();
+assertTrue(s1 instanceof Symbol);

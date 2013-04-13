@@ -1,15 +1,22 @@
-// Options: --private-names
+// Options: --symbols
 
-import Name from '@name';
-var n = new Name;
+import Symbol from '@name';
+var s = Symbol();
+assertEquals(typeof s, 'symbol');
 var object = {};
-object[n] = 42;
-assertEquals(42, object[n]);
-assertUndefined(object[n.public]);
-assertUndefined(object[n + '']);
-assertArrayEquals([], Object.getOwnPropertyNames(object));
-assertFalse(object.hasOwnProperty(n));
+object[s] = 42;
+assertEquals(42, object[s]);
+assertUndefined(object[s.name]);
+assertThrows(function() {
+  s + '';
+});
+assertThrows(function() {
+  s.toString();
+});
 
-assertEquals(32, object[n] -= 10);
-assertEquals(16, object[n] /= 2);
-assertEquals(16, object[n]);
+assertArrayEquals([], Object.getOwnPropertyNames(object));
+assertFalse(object.hasOwnProperty(s));
+
+assertEquals(32, object[s] -= 10);
+assertEquals(16, object[s] /= 2);
+assertEquals(16, object[s]);

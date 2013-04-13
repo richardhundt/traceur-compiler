@@ -38,6 +38,7 @@ import {TemplateLiteralTransformer} from './TemplateLiteralTransformer.js';
 import {RestParameterTransformer} from './RestParameterTransformer.js';
 import {SpreadTransformer} from './SpreadTransformer.js';
 import {TypeTransformer} from './TypeTransformer.js';
+import {TypeofTransformer} from './TypeofTransformer.js';
 import {options, transformOptions} from '../options.js';
 
 /**
@@ -147,7 +148,7 @@ export class ProgramTransformer {
               PropertyNameShorthandTransformer);
     transform(transformOptions.propertyMethods ||
               transformOptions.privateNameSyntax &&
-              transformOptions.privateNames,
+              transformOptions.symbols,
               ObjectLiteralTransformer,
               identifierGenerator);
 
@@ -189,12 +190,12 @@ export class ProgramTransformer {
               runtimeInliner,
               reporter);
 
-    transform(transformOptions.privateNames &&
+    transform(transformOptions.symbols &&
               transformOptions.privateNameSyntax,
               AtNameMemberTransformer,
               identifierGenerator);
 
-    transform(transformOptions.privateNames &&
+    transform(transformOptions.symbols &&
               transformOptions.privateNameSyntax,
               PrivateNameSyntaxTransformer,
               identifierGenerator);
@@ -216,9 +217,11 @@ export class ProgramTransformer {
               reporter);
 
     transform(transformOptions.trapMemberLookup ||
-              transformOptions.privateNames,
+              transformOptions.symbols,
               CollectionTransformer,
               identifierGenerator);
+
+    transform(transformOptions.symbols, TypeofTransformer);
 
     // Issue errors for any unbound variables
     chain(options.freeVariableChecker,

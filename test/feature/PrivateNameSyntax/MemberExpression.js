@@ -1,4 +1,4 @@
-// Options: --private-names --private-name-syntax
+// Options: --symbols --private-name-syntax
 
 // IIFE to hide private names from other tests.
 (function() {

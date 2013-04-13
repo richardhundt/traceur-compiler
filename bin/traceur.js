@@ -212,7 +212,7 @@ var $___src_options_js = (function() {
   addFeatureOption('modules', ON_BY_DEFAULT);
   addFeatureOption('blockBinding', EXPERIMENTAL);
   addFeatureOption('privateNameSyntax', EXPERIMENTAL);
-  addFeatureOption('privateNames', EXPERIMENTAL);
+  addFeatureOption('symbols', EXPERIMENTAL);
   addFeatureOption('cascadeExpression', EXPERIMENTAL);
   addFeatureOption('trapMemberLookup', EXPERIMENTAL);
   addFeatureOption('deferredFunctions', EXPERIMENTAL);
@@ -6368,7 +6368,7 @@ var $___src_syntax_PredefinedName_js = (function() {
   var APPLY = 'apply';
   var ARGUMENTS = 'arguments';
   var ARRAY = 'Array';
-  var ASSERT_NAME = 'assertName';
+  var ASSERT_SYMBOL = 'assertSymbol';
   var BIND = 'bind';
   var BOOL = 'bool';
   var CALL = 'call';
@@ -6384,7 +6384,7 @@ var $___src_syntax_PredefinedName_js = (function() {
   var CREATE_CALLBACK = '$createCallback';
   var CREATE_CLASS = 'createClass';
   var CREATE_ERRBACK = '$createErrback';
-  var CREATE_NAME = 'createName';
+  var CREATE_SYMBOL = 'createSymbol';
   var CREATE_PROMISE = 'createPromise';
   var CURRENT = 'current';
   var DEFERRED = 'Deferred';
@@ -6449,6 +6449,7 @@ var $___src_syntax_PredefinedName_js = (function() {
   var THIS = 'this';
   var TRACEUR = 'traceur';
   var TYPE_ERROR = 'TypeError';
+  var TYPEOF = 'typeof';
   var UNDEFINED = 'undefined';
   var VALUE = 'value';
   var WAIT_TASK = '$waitTask';
@@ -6518,9 +6519,9 @@ var $___src_syntax_PredefinedName_js = (function() {
       },
       enumerable: true
     },
-    ASSERT_NAME: {
+    ASSERT_SYMBOL: {
       get: function() {
-        return ASSERT_NAME;
+        return ASSERT_SYMBOL;
       },
       enumerable: true
     },
@@ -6614,9 +6615,9 @@ var $___src_syntax_PredefinedName_js = (function() {
       },
       enumerable: true
     },
-    CREATE_NAME: {
+    CREATE_SYMBOL: {
       get: function() {
-        return CREATE_NAME;
+        return CREATE_SYMBOL;
       },
       enumerable: true
     },
@@ -7001,6 +7002,12 @@ var $___src_syntax_PredefinedName_js = (function() {
     TYPE_ERROR: {
       get: function() {
         return TYPE_ERROR;
+      },
+      enumerable: true
+    },
+    TYPEOF: {
+      get: function() {
+        return TYPEOF;
       },
       enumerable: true
     },
@@ -17153,7 +17160,7 @@ var $___src_syntax_ParseTreeValidator_js = (function() {
 }).call(this);
 var $___src_codegeneration_PrivateNameSyntaxTransformer_js = (function() {
   "use strict";
-  var $__19 = $___src_syntax_PredefinedName_js, ASSERT_NAME = $__19.ASSERT_NAME, CREATE_NAME = $__19.CREATE_NAME, RUNTIME = $__19.RUNTIME, TRACEUR = $__19.TRACEUR;
+  var $__19 = $___src_syntax_PredefinedName_js, ASSERT_SYMBOL = $__19.ASSERT_SYMBOL, CREATE_SYMBOL = $__19.CREATE_SYMBOL, RUNTIME = $__19.RUNTIME, TRACEUR = $__19.TRACEUR;
   var TempVarTransformer = $___src_codegeneration_TempVarTransformer_js.TempVarTransformer;
   var CONST = $___src_syntax_TokenType_js.CONST;
   var $__19 = $___src_syntax_trees_ParseTrees_js, VariableDeclarationList = $__19.VariableDeclarationList, VariableStatement = $__19.VariableStatement;
@@ -17181,10 +17188,10 @@ var $___src_codegeneration_PrivateNameSyntaxTransformer_js = (function() {
         var args, name;
         if (tree.initializer) {
           args = createArgumentList(this.transformAny(tree.initializer));
-          name = ASSERT_NAME;
+          name = ASSERT_SYMBOL;
         } else {
           args = createEmptyArgumentList();
-          name = CREATE_NAME;
+          name = CREATE_SYMBOL;
         }
         return createVariableDeclaration(transformedName, createCallExpression(createMemberExpression(TRACEUR, RUNTIME, name), args));
       }
@@ -17599,6 +17606,42 @@ var $___src_codegeneration_TypeTransformer_js = (function() {
       enumerable: true
     }}));
 }).call(this);
+var $___src_codegeneration_TypeofTransformer_js = (function() {
+  "use strict";
+  var IDENTIFIER_EXPRESSION = $___src_syntax_trees_ParseTreeType_js.IDENTIFIER_EXPRESSION;
+  var ParseTreeTransformer = $___src_codegeneration_ParseTreeTransformer_js.ParseTreeTransformer;
+  var ParseTreeTransformer = $___src_codegeneration_ParseTreeTransformer_js.ParseTreeTransformer;
+  var $__19 = $___src_syntax_PredefinedName_js, RUNTIME = $__19.RUNTIME, TRACEUR = $__19.TRACEUR, TYPEOF = $__19.TYPEOF, UNDEFINED = $__19.UNDEFINED;
+  var $__19 = $___src_syntax_TokenType_js, TYPEOF = $__19.TYPEOF, EQUAL_EQUAL_EQUAL = $__19.EQUAL_EQUAL_EQUAL;
+  var $__19 = $___src_codegeneration_ParseTreeFactory_js, createArgumentList = $__19.createArgumentList, createBinaryOperator = $__19.createBinaryOperator, createCallExpression = $__19.createCallExpression, createConditionalExpression = $__19.createConditionalExpression, createMemberExpression = $__19.createMemberExpression, createOperatorToken = $__19.createOperatorToken, createParenExpression = $__19.createParenExpression, createStringLiteral = $__19.createStringLiteral, createUnaryExpression = $__19.createUnaryExpression;
+  var TypeofTransformer = function($__super) {
+    'use strict';
+    var $__proto = $__getProtoParent($__super);
+    var $TypeofTransformer = ($__createClass)({
+      constructor: function() {
+        $__superCall(this, $__proto, "constructor", arguments);
+      },
+      transformUnaryExpression: function(tree) {
+        if (tree.operator.type !== TYPEOF) return $__superCall(this, $__proto, "transformUnaryExpression", [tree]);
+        var operand = this.transformAny(tree.operand);
+        var callExpression = createCallExpression(createMemberExpression(TRACEUR, RUNTIME, TYPEOF), createArgumentList(operand));
+        if (operand.type === IDENTIFIER_EXPRESSION) {
+          return createParenExpression(createConditionalExpression(createBinaryOperator(createUnaryExpression(TYPEOF, operand), createOperatorToken(EQUAL_EQUAL_EQUAL), createStringLiteral(UNDEFINED)), createStringLiteral(UNDEFINED), callExpression));
+        }
+        return callExpression;
+      }
+    }, {transformTree: function(tree) {
+        return new TypeofTransformer().transformAny(tree);
+      }}, $__proto, $__super, false);
+    return $TypeofTransformer;
+  }(ParseTreeTransformer);
+  return Object.preventExtensions(Object.create(null, {TypeofTransformer: {
+      get: function() {
+        return TypeofTransformer;
+      },
+      enumerable: true
+    }}));
+}).call(this);
 var $___src_codegeneration_ProgramTransformer_js = (function() {
   "use strict";
   var ArrayComprehensionTransformer = $___src_codegeneration_ArrayComprehensionTransformer_js.ArrayComprehensionTransformer;
@@ -17624,6 +17667,7 @@ var $___src_codegeneration_ProgramTransformer_js = (function() {
   var RestParameterTransformer = $___src_codegeneration_RestParameterTransformer_js.RestParameterTransformer;
   var SpreadTransformer = $___src_codegeneration_SpreadTransformer_js.SpreadTransformer;
   var TypeTransformer = $___src_codegeneration_TypeTransformer_js.TypeTransformer;
+  var TypeofTransformer = $___src_codegeneration_TypeofTransformer_js.TypeofTransformer;
   var $__19 = $___src_options_js, options = $__19.options, transformOptions = $__19.transformOptions;
   var ProgramTransformer = function() {
     'use strict';
@@ -17677,7 +17721,7 @@ var $___src_codegeneration_ProgramTransformer_js = (function() {
         transform(transformOptions.arrowFunctions, ArrowFunctionTransformer, reporter);
         transform(transformOptions.classes, ClassTransformer, identifierGenerator, runtimeInliner, reporter);
         transform(transformOptions.propertyNameShorthand, PropertyNameShorthandTransformer);
-        transform(transformOptions.propertyMethods || transformOptions.privateNameSyntax && transformOptions.privateNames, ObjectLiteralTransformer, identifierGenerator);
+        transform(transformOptions.propertyMethods || transformOptions.privateNameSyntax && transformOptions.symbols, ObjectLiteralTransformer, identifierGenerator);
         transform(transformOptions.generatorComprehension, GeneratorComprehensionTransformer, identifierGenerator);
         transform(transformOptions.arrayComprehension, ArrayComprehensionTransformer, identifierGenerator);
         transform(transformOptions.forOf, ForOfTransformer, identifierGenerator);
@@ -17685,15 +17729,16 @@ var $___src_codegeneration_ProgramTransformer_js = (function() {
         transform(transformOptions.defaultParameters, DefaultParametersTransformer);
         transform(transformOptions.destructuring, DestructuringTransformer, identifierGenerator);
         transform(transformOptions.generators || transformOptions.deferredFunctions, GeneratorTransformPass, identifierGenerator, runtimeInliner, reporter);
-        transform(transformOptions.privateNames && transformOptions.privateNameSyntax, AtNameMemberTransformer, identifierGenerator);
-        transform(transformOptions.privateNames && transformOptions.privateNameSyntax, PrivateNameSyntaxTransformer, identifierGenerator);
+        transform(transformOptions.symbols && transformOptions.privateNameSyntax, AtNameMemberTransformer, identifierGenerator);
+        transform(transformOptions.symbols && transformOptions.privateNameSyntax, PrivateNameSyntaxTransformer, identifierGenerator);
         transform(transformOptions.spread, SpreadTransformer, identifierGenerator, runtimeInliner);
         chain(true, (function() {
           return runtimeInliner.transformAny(tree);
         }));
         transform(transformOptions.blockBinding, BlockBindingTransformer);
         transform(transformOptions.cascadeExpression, CascadeExpressionTransformer, identifierGenerator, reporter);
-        transform(transformOptions.trapMemberLookup || transformOptions.privateNames, CollectionTransformer, identifierGenerator);
+        transform(transformOptions.trapMemberLookup || transformOptions.symbols, CollectionTransformer, identifierGenerator);
+        transform(transformOptions.symbols, TypeofTransformer);
         chain(options.freeVariableChecker, (function() {
           return FreeVariableChecker.checkProgram(reporter, tree);
         }));
@@ -20629,40 +20674,53 @@ var traceur = (function() {
     return '__$' + Math.floor(Math.random() * 1e9) + '$' + ++counter + '$__';
   }
   var nameRe = /^__\$(?:\d+)\$(?:\d+)\$__$/;
-  var internalStringValueName = newUniqueString();
-  function Name(string) {
-    if (!string) string = newUniqueString();
-    $defineProperty(this, internalStringValueName, {value: newUniqueString()});
-    function toString() {
-      return string;
+  var symbolInternalProperty = newUniqueString();
+  var symbolNameProperty = newUniqueString();
+  var symbolValueProperty = newUniqueString();
+  function Symbol(name) {
+    var value = new SymbolValue(name);
+    if (!(this instanceof Symbol)) return value;
+    $defineProperty(this, symbolValueProperty, {value: value});
+    $defineProperty(this, symbolNameProperty, {value: value.name});
+  }
+  Symbol.prototype = {
+    get name() {
+      return this[symbolNameProperty];
+    },
+    toString: function() {
+      throw TypeError('Conversion from symbol to string');
+    },
+    valueOf: function() {
+      if (isSymbol(this)) throw TypeError('Conversion from symbol to string');
+      return this[symbolValueProperty];
     }
-    $freeze(toString);
-    $freeze(toString.prototype);
-    var toStringDescr = method(toString);
-    $defineProperty(this, 'toString', toStringDescr);
-    this.public = $freeze($create(null, {toString: method($freeze(function toString() {
-        return string;
-      }))}));
-    $freeze(this.public.toString.prototype);
+  };
+  $defineProperty(Symbol.prototype, 'name', {enumerable: false});
+  $defineProperty(Symbol.prototype, 'toString', {enumerable: false});
+  $defineProperty(Symbol.prototype, 'valueOf', {enumerable: false});
+  function SymbolValue(name) {
+    $defineProperty(this, symbolInternalProperty, {value: newUniqueString()});
+    $defineProperty(this, symbolNameProperty, {value: name || ''});
     $freeze(this);
   }
-  ;
-  $freeze(Name);
-  $freeze(Name.prototype);
-  function assertName(val) {
-    if (!NameModule.isName(val)) throw new TypeError(val + ' is not a Name');
+  SymbolValue.prototype = Symbol.prototype;
+  $freeze(SymbolValue.prototype);
+  function isSymbol(symbol) {
+    return symbol && $hasOwnProperty.call(symbol, symbolInternalProperty);
+  }
+  function assertSymbol(val) {
+    if (!isSymbol(val)) throw new TypeError(val + ' is not a Symbol');
     return val;
   }
-  var elementDeleteName = new Name();
-  var elementGetName = new Name();
-  var elementSetName = new Name();
-  var NameModule = $freeze({
-    Name: function(str) {
-      return new Name(str);
-    },
-    isName: function(x) {
-      return x instanceof Name;
-    },
+  function typeOf(v) {
+    if (isSymbol(v)) return 'symbol';
+    return typeof v;
+  }
+  var elementDeleteName = Symbol();
+  var elementGetName = Symbol();
+  var elementSetName = Symbol();
+  var SymbolModule = $freeze({
+    Symbol: Symbol,
     elementGet: elementGetName,
     elementSet: elementSetName,
     elementDelete: elementDeleteName
@@ -20674,7 +20732,7 @@ var traceur = (function() {
     });
   }
   function hasOwnProperty(name) {
-    if (NameModule.isName(name) || nameRe.test(name)) return false;
+    if (isSymbol(name) || nameRe.test(name)) return false;
     return $hasOwnProperty.call(this, name);
   }
   function elementDelete(object, name) {
@@ -20704,37 +20762,37 @@ var traceur = (function() {
     if (nameRe.test(s)) throw Error('Invalid access to private name');
   }
   function deleteProperty(object, name) {
-    if (NameModule.isName(name)) return delete object[name[internalStringValueName]];
+    if (isSymbol(name)) return delete object[name[symbolInternalProperty]];
     if (nameRe.test(name)) return true;
     return delete object[name];
   }
   function getProperty(object, name) {
-    if (NameModule.isName(name)) return object[name[internalStringValueName]];
+    if (isSymbol(name)) return object[name[symbolInternalProperty]];
     if (nameRe.test(name)) return undefined;
     return object[name];
   }
   function hasPrivateNameProperty(object, name) {
-    return name[internalStringValueName]in Object(object);
+    return name[symbolInternalProperty]in Object(object);
   }
   function has(object, name) {
-    if (NameModule.isName(name) || nameRe.test(name)) return false;
+    if (isSymbol(name) || nameRe.test(name)) return false;
     return name in Object(object);
   }
   function setProperty(object, name, value) {
-    if (NameModule.isName(name)) {
-      var descriptor = $getPropertyDescriptor(object, [name[internalStringValueName]]);
-      if (descriptor) object[name[internalStringValueName]] = value; else $defineProperty(object, name[internalStringValueName], nonEnum(value));
+    if (isSymbol(name)) {
+      var descriptor = $getPropertyDescriptor(object, [name[symbolInternalProperty]]);
+      if (descriptor) object[name[symbolInternalProperty]] = value; else $defineProperty(object, name[symbolInternalProperty], nonEnum(value));
     } else {
       assertNotName(name);
       object[name] = value;
     }
   }
   function defineProperty(object, name, descriptor) {
-    if (NameModule.isName(name)) {
+    if (isSymbol(name)) {
       if (descriptor.enumerable) {
         descriptor = Object.create(descriptor, {enumerable: {value: false}});
       }
-      $defineProperty(object, name[internalStringValueName], descriptor);
+      $defineProperty(object, name[symbolInternalProperty], descriptor);
     } else {
       assertNotName(name);
       $defineProperty(object, name, descriptor);
@@ -20749,7 +20807,7 @@ var traceur = (function() {
     return undefined;
   }
   function getPropertyDescriptor(obj, name) {
-    if (NameModule.isName(name)) return undefined;
+    if (isSymbol(name)) return undefined;
     assertNotName(name);
     return $getPropertyDescriptor(obj, name);
   }
@@ -20768,7 +20826,7 @@ var traceur = (function() {
     }
     $defineProperty(Object, 'is', method(is));
   }
-  var iteratorName = new Name('iterator');
+  var iteratorName = Symbol('iterator');
   var IterModule = {
     get iterator() {
       return iteratorName;
@@ -20912,7 +20970,7 @@ var traceur = (function() {
   };
   var modules = $freeze({
     get'@name'() {
-      return NameModule;
+      return SymbolModule;
     },
     get'@iter'() {
       return IterModule;
@@ -20937,8 +20995,8 @@ var traceur = (function() {
     setStopIteration: setStopIteration,
     isStopIteration: isStopIteration,
     addIterator: addIterator,
-    assertName: assertName,
-    createName: NameModule.Name,
+    assertSymbol: assertSymbol,
+    createSymbol: SymbolModule.Symbol,
     deleteProperty: deleteProperty,
     elementDelete: elementDelete,
     elementGet: elementGet,
@@ -20949,7 +21007,8 @@ var traceur = (function() {
     setProperty: setProperty,
     setupGlobals: setupGlobals,
     has: has,
-    modules: modules
+    modules: modules,
+    typeof: typeOf
   };
   if (typeof traceur !== 'undefined') traceur.setRuntime(runtime); else global.traceur = {runtime: runtime};
 })(typeof global !== 'undefined' ? global: this);

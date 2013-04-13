@@ -13,8 +13,8 @@
 // limitations under the License.
 
 import {
-  ASSERT_NAME,
-  CREATE_NAME,
+  ASSERT_SYMBOL,
+  CREATE_SYMBOL,
   RUNTIME,
   TRACEUR
 } from '../syntax/PredefinedName.js';
@@ -53,7 +53,7 @@ export class PrivateNameSyntaxTransformer extends TempVarTransformer {
     // private @a, @b = expr;
     //  =>
     // const __a = traceur.runtime.createName(),
-    //       __b = traceur.runtime.assertName(expr)
+    //       __b = traceur.runtime.assertSymbol(expr)
     var declarations = this.transformList(tree.declarations);
     return new VariableStatement(tree.location,
         new VariableDeclarationList(tree.location, CONST, declarations));
@@ -65,10 +65,10 @@ export class PrivateNameSyntaxTransformer extends TempVarTransformer {
     var args, name;
     if (tree.initializer) {
       args = createArgumentList(this.transformAny(tree.initializer));
-      name = ASSERT_NAME;
+      name = ASSERT_SYMBOL;
     } else {
       args = createEmptyArgumentList();
-      name = CREATE_NAME;
+      name = CREATE_SYMBOL;
     }
 
     return createVariableDeclaration(transformedName,

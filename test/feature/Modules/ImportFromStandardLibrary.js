@@ -1,15 +1,14 @@
-import {Name: create, isName} from '@name';
-import Name from '@name';
-module n from '@name'
+// Options: --symbols
 
-var n1 = create();
-var n2 = Name();
-var n3 = new Name();
+import {Symbol: create} from '@name';
+import {Symbol} from '@name';
 
-assertTrue(isName(n1));
-assertTrue(isName(n2));
-assertTrue(isName(n3));
+var s1 = create();
+var s2 = Symbol();
+var s3 = new Symbol();
 
-assertEquals(Name, create);
-assertEquals(n.Name, Name);
-assertEquals(isName, isName);
+assertEquals(typeof s1, 'symbol');
+assertEquals(typeof s2, 'symbol');
+
+assertTrue(s3 instanceof Symbol);
+assertEquals(typeof s3, 'object');
