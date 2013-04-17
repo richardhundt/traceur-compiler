@@ -150,6 +150,16 @@ function filterOption(dashedName) {
   return name === 'experimental' || !(name in options);
 }
 
+var pendingCallbacks = [];
+
+function listen(f) {
+  pendingCallbacks.push(f);
+}
+
+function broadcastChange(name) {
+  pendingCallbacks.forEach((f) => f(name));
+}
+
 // Make sure non option fields are non enumerable.
 Object.defineProperties(options, {
   parse: {value: parseOptions},
@@ -159,7 +169,8 @@ Object.defineProperties(options, {
   fromArgv: {value: fromArgv},
   setFromObject: {value: setFromObject},
   addOptions: {value: addOptions},
-  filterOption: {value: filterOption}
+  filterOption: {value: filterOption},
+  listen: {value: listen}
 });
 
 /**
@@ -223,6 +234,7 @@ function addFeatureOption(name, kind) {
       } else {
         parseOptions[name] = transformOptions[name] = Boolean(v);
       }
+      broadcastChange(name);
     },
     enumerable: true,
     configurable: true

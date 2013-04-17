@@ -292,18 +292,37 @@
     return $getPropertyDescriptor(obj, name);
   }
 
+  function setupSymbolOverrides(global) {
+    if (traceur.options.symbols)
+      global.Symbol = Symbol;
+    overrideObjectMethods(global.Object);
+  }
+
+  function overrideObjectMethods(Object) {
+    if (traceur.options.symbols) {
+      $defineProperty(Object, 'defineProperty', {value: defineProperty});
+      $defineProperty(Object, 'getOwnPropertyNames',
+                      {value: getOwnPropertyNames});
+      $defineProperty(Object.prototype, 'hasOwnProperty',
+                      {value: hasOwnProperty});
+
+    } else {
+      $defineProperty(Object, 'defineProperty', {value: $defineProperty});
+      $defineProperty(Object, 'getOwnPropertyNames',
+                      {value: $getOwnPropertyNames});
+      $defineProperty(Object.prototype, 'hasOwnProperty',
+                      {value: $hasOwnProperty});
+    }
+  }
+
   function polyfillObject(Object) {
-    $defineProperty(Object, 'defineProperty', {value: defineProperty});
+    overrideObjectMethods(Object);
     $defineProperty(Object, 'deleteProperty', method(deleteProperty));
-    $defineProperty(Object, 'getOwnPropertyNames',
-                    {value: getOwnPropertyNames});
     $defineProperty(Object, 'getProperty', method(getProperty));
-    $defineProperty(Object, 'getPropertyDescriptor',
-                    method(getPropertyDescriptor));
     $defineProperty(Object, 'has', method(has));
     $defineProperty(Object, 'setProperty', method(setProperty));
-    $defineProperty(Object.prototype, 'hasOwnProperty',
-                    {value: hasOwnProperty});
+    $defineProperty(Object, 'getPropertyDescriptor',
+                    method(getPropertyDescriptor));
 
     // Object.is
 
@@ -520,6 +539,13 @@
     polyfillString(global.String);
     polyfillObject(global.Object);
     polyfillArray(global.Array);
+
+    setupSymbolOverrides(global);
+
+    traceur.options.listen((name) => {
+      if (name === 'symbols')
+        setupSymbolOverrides(global);
+    });
   }
 
   setupGlobals(global);

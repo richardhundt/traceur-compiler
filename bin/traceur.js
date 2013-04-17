@@ -140,6 +140,15 @@ var $___src_options_js = (function() {
     var name = toCamelCase(dashedName);
     return name === 'experimental' || !(name in options);
   }
+  var pendingCallbacks = [];
+  function listen(f) {
+    pendingCallbacks.push(f);
+  }
+  function broadcastChange(name) {
+    pendingCallbacks.forEach((function(f) {
+      return f(name);
+    }));
+  }
   Object.defineProperties(options, {
     parse: {value: parseOptions},
     transform: {value: transformOptions},
@@ -148,7 +157,8 @@ var $___src_options_js = (function() {
     fromArgv: {value: fromArgv},
     setFromObject: {value: setFromObject},
     addOptions: {value: addOptions},
-    filterOption: {value: filterOption}
+    filterOption: {value: filterOption},
+    listen: {value: listen}
   });
   function parseCommand(s) {
     var re = /--([^=]+)(?:=(.+))?/;
@@ -183,6 +193,7 @@ var $___src_options_js = (function() {
         } else {
           parseOptions[name] = transformOptions[name] = Boolean(v);
         }
+        broadcastChange(name);
       },
       enumerable: true,
       configurable: true
@@ -20811,15 +20822,28 @@ var traceur = (function() {
     assertNotName(name);
     return $getPropertyDescriptor(obj, name);
   }
+  function setupSymbolOverrides(global) {
+    if (traceur.options.symbols) global.Symbol = Symbol;
+    overrideObjectMethods(global.Object);
+  }
+  function overrideObjectMethods(Object) {
+    if (traceur.options.symbols) {
+      $defineProperty(Object, 'defineProperty', {value: defineProperty});
+      $defineProperty(Object, 'getOwnPropertyNames', {value: getOwnPropertyNames});
+      $defineProperty(Object.prototype, 'hasOwnProperty', {value: hasOwnProperty});
+    } else {
+      $defineProperty(Object, 'defineProperty', {value: $defineProperty});
+      $defineProperty(Object, 'getOwnPropertyNames', {value: $getOwnPropertyNames});
+      $defineProperty(Object.prototype, 'hasOwnProperty', {value: $hasOwnProperty});
+    }
+  }
   function polyfillObject(Object) {
-    $defineProperty(Object, 'defineProperty', {value: defineProperty});
+    overrideObjectMethods(Object);
     $defineProperty(Object, 'deleteProperty', method(deleteProperty));
-    $defineProperty(Object, 'getOwnPropertyNames', {value: getOwnPropertyNames});
     $defineProperty(Object, 'getProperty', method(getProperty));
-    $defineProperty(Object, 'getPropertyDescriptor', method(getPropertyDescriptor));
     $defineProperty(Object, 'has', method(has));
     $defineProperty(Object, 'setProperty', method(setProperty));
-    $defineProperty(Object.prototype, 'hasOwnProperty', {value: hasOwnProperty});
+    $defineProperty(Object, 'getPropertyDescriptor', method(getPropertyDescriptor));
     function is(left, right) {
       if (left === right) return left !== 0 || 1 / left === 1 / right;
       return left !== left && right !== right;
@@ -20981,6 +21005,10 @@ var traceur = (function() {
     polyfillString(global.String);
     polyfillObject(global.Object);
     polyfillArray(global.Array);
+    setupSymbolOverrides(global);
+    traceur.options.listen((function(name) {
+      if (name === 'symbols') setupSymbolOverrides(global);
+    }));
   }
   setupGlobals(global);
   var runtime = {

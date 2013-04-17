@@ -1,6 +1,6 @@
-// Options: --trap-member-lookup --block-binding
+// Options: --trap-member-lookup --block-binding --symbols
 
-module Name from '@name';
+import {elementSet} from '@name';
 
 {
   function isIndex(s) {
@@ -24,7 +24,7 @@ module Name from '@name';
     }
   });
 
-  ArrayLike.prototype[Name.elementSet] = function(name, value) {
+  ArrayLike.prototype[elementSet] = function(name, value) {
     if (isIndex(name) && +name >= this.length) {
       this._length = +name + 1;
     }
