@@ -1,7 +1,5 @@
 // Options: --symbols
 
-import {Symbol} from '@name';
-
 var s1 = new Symbol;
 assertTrue(s1 instanceof Symbol);
 assertEquals(typeof s1, 'object');
