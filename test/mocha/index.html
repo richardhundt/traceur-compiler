@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../node_modules/mocha/mocha.css">
+<script src="../../node_modules/mocha/mocha.js"></script>
+<script src="../../node_modules/chai/chai.js"></script>
+<script src="../../node_modules/sinon-chai/lib/sinon-chai.js"></script>
+<script src="../../bin/traceur.js"></script>
+<script>
+
+var assert = chai.assert;
+
+mocha.setup({ui: 'tdd'});
+
+</script>
+<script src="util/url.js"></script>
+<script src="syntax/Token.js"></script>
+<script src="codegeneration/writer.js"></script>
+<div id="mocha"></div>
+<script>
+
+mocha.run();
+
+</script>
