@@ -47,8 +47,8 @@ function runCode(code, name) {
   try {
     ('global', eval)(code);
   } catch (e) {
-    fail('Error running compiled output for : ' + name + '\n' + code + '\n' +
-         e);
+    fail('Error running compiled output for : ' + name + '\n' + e + '\n' +
+         code);
   }
 }
 
@@ -138,20 +138,17 @@ var assertEquals = assert.equal;
 var assertTrue = assert.isTrue;
 var assertFalse = assert.isFalse;
 var assertUndefined = assert.isUndefined;
-var assertThrows = assert.throws;
 var assertNotNull = assert.isNotNull;
-// var assertNotThrows .assert.
+var assertNotThrows = assert.doesNotThrow;
 
-function assertNotThrows(fn) {
+function assertThrows(fn) {
   try {
     fn();
-  } catch (e) {
-    fail('Function should not have thrown.');
+  } catch (ex) {
+    return ex;
   }
+  fail('Expected function to throw');
 }
-
-
-// testList = ['sdsad'];
 
 testList.forEach(function(path) {
   featureTest('../feature/' + path);

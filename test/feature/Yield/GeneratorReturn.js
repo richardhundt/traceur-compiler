@@ -1,22 +1,21 @@
 function assertThrownEquals(x, fn) {
-  assertEquals(x, assertThrows(fn));
+  assert.throws(fn, x);
 }
 
 function assertThrownErrorIs(str, fn) {
-  var e = assertThrows(fn);
-  if (!e instanceof Error)
-    fail('expected Error object');
-
-  assertEquals(str, e.message);
+  assert.throws(fn, Error, str);
 }
 
 import {isStopIteration} from '@iter';
 
 function assertThrowsStopIteration(fn) {
-  var e = assertThrows(fn);
-  if (!isStopIteration(e))
-    fail('[object StopIteration] expected');
-  return e;
+  try {
+    fn();
+  } catch (ex) {
+    assert.isTrue(isStopIteration(ex), '[object StopIteration] expected');
+    return ex;
+  }
+  fail('Expected to throw a StopIteration exception');
 }
 
 function assertClosed(g) {

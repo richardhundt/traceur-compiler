@@ -1,13 +1,15 @@
 // Options: --unstarredGenerators
 
-function isStopIteration(s) {
-  // Maybe something more rigorous later.
-  return typeof s === 'object' && String(s) === '[object StopIteration]';
-}
+import {isStopIteration} from '@iter';
 
 function assertThrowsStopIteration(fn) {
-  if (!isStopIteration(assertThrows(fn)))
-    fail('[object StopIteration] expected');
+  try {
+    fn();
+  } catch (ex) {
+    assert.isTrue(isStopIteration(ex), '[object StopIteration] expected');
+    return ex;
+  }
+  fail('Expected to throw a StopIteration exception');
 }
 
 //-----------------------------------------------------------------------------
