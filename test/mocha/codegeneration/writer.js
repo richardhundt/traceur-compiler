@@ -63,7 +63,7 @@ suite('writer.js', function() {
 
   var errorReporter = {
     reportError: function(position, message) {
-      assert.fail(message + ', ' + position);
+      throw new chai.AssertionError({message: message + ', ' + position});
     }
   };
 

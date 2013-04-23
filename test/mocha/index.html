@@ -3,8 +3,9 @@
 <link rel="stylesheet" href="../../node_modules/mocha/mocha.css">
 <script src="../../node_modules/mocha/mocha.js"></script>
 <script src="../../node_modules/chai/chai.js"></script>
-<script src="../../node_modules/sinon-chai/lib/sinon-chai.js"></script>
 <script src="../../bin/traceur.js"></script>
+<script src="../test-utils.js"></script>
+<script src="../test-list.js"></script>
 <script>
 
 var assert = chai.assert;
@@ -13,9 +14,151 @@ mocha.setup({ui: 'tdd'});
 
 </script>
 <script src="util/url.js"></script>
+<script src="util/ErrorReporter.js"></script>
+<script src="syntax/LineNumbers.js"></script>
 <script src="syntax/Token.js"></script>
+<script src="syntax/parser.js"></script>
 <script src="codegeneration/writer.js"></script>
 <div id="mocha"></div>
+<script>
+
+function fail(m) {
+  throw new chai.AssertionError({message: m});
+}
+
+/**
+ * Given a path like "feature/Foo/Bar" makes a function name to test that
+ * feature: "testFooBar".
+ */
+function makeTestName(path) {
+  var pathStart = 'feature/';
+  var start = path.indexOf(pathStart);
+
+  var name = path.substring(start >= 0 ? start + pathStart.length : 0);
+  name = name.replace('/', '');
+  name = name.replace('.js', '');
+
+  return 'test' + name;
+}
+
+function runCode(code, name) {
+  'use strict';
+
+  try {
+    ('global', eval)(code);
+  } catch (e) {
+    fail('Error running compiled output for : ' + name + '\n' + code + '\n' +
+         e);
+  }
+}
+
+function featureTest(url) {
+  var urlOptions = {};
+  suite(url, function() {
+    test(url, function(done) {
+
+      var name = url;
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      var loadError = false;
+      xhr.onerror = function() {
+        fail('Load error');
+        loadError = true;
+      };
+      xhr.onloadend = function() {
+        if (loadError)
+          return;
+
+        var source = xhr.responseText;
+
+        traceur.options.debug = true;
+        traceur.options.freeVariableChecker = true;
+        traceur.options.validate = true;
+
+        var options = parseProlog(source);
+        var skip = options.skip;
+        var shouldCompile = options.shouldCompile;
+        var expectedErrors = options.expectedErrors;
+
+        try {
+          var reporter = new traceur.util.TestErrorReporter();
+          var sourceFile = new traceur.syntax.SourceFile(name, source);
+          var tree = traceur.codegeneration.Compiler.compileFile(reporter,
+                                                                 sourceFile,
+                                                                 url);
+          var code = traceur.outputgeneration.TreeWriter.write(tree);
+
+          if (!shouldCompile) {
+            assert.isTrue(reporter.hadError(),
+                'Expected error compiling ' + name + ', but got none.');
+
+            var missingExpectations = expectedErrors.forEach(function(expected) {
+              assert.isTrue(reporter.hasMatchingError(expected),
+                            'Missing expected error: ' + expected);
+            });
+
+            skip = true;
+          }
+
+          var CloneTreeTransformer = traceur.codegeneration.CloneTreeTransformer;
+
+          if (!skip) {
+              if (reporter.hadError()) {
+                fail('Error compiling ' + name + '.\n' +
+                     reporter.errors.join('\n'));
+                return;
+              }
+              if (urlOptions.testClone === 'true') {
+                var clone = CloneTreeTransformer.cloneTree(tree);
+                code = traceur.outputgeneration.TreeWriter.write(tree);
+                var cloneCode = traceur.outputgeneration.TreeWriter.write(clone);
+                assert.equal(code, cloneCode);
+              } else {
+                // Script compiled, so run it.
+                runCode(code, name);
+              }
+          }
+        } finally {
+          traceur.options.reset();
+        }
+
+        done();
+      };
+      xhr.send();
+    });
+  });
+}
+
+
+</script>
+<script>
+
+var assertNotEquals = assert.notEqual;
+var assertEquals = assert.equal;
+var assertTrue = assert.isTrue;
+var assertFalse = assert.isFalse;
+var assertUndefined = assert.isUndefined;
+var assertThrows = assert.throws;
+var assertNotNull = assert.isNotNull;
+// var assertNotThrows .assert.
+
+function assertNotThrows(fn) {
+  try {
+    fn();
+  } catch (e) {
+    fail('Function should not have thrown.');
+  }
+}
+
+
+// testList = ['sdsad'];
+
+testList.forEach(function(path) {
+  featureTest('../feature/' + path);
+});
+
+</script>
+
 <script>
 
 mocha.run();

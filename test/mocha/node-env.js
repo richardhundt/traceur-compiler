@@ -13,5 +13,6 @@
 // limitations under the License.
 
 
-global.assert = require('chai').assert;
+global.chai = require('chai');
+global.assert = chai.assert;
 global.traceur = require('../../src/node/traceur.js');
