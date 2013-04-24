@@ -16,8 +16,11 @@
 
 var fs = require('fs');
 var path = require('path');
+var chai = require('chai');
+var assert = chai.assert;
 var testUtil = require('./test-utils.js');
 var testList;
+
 
 /**
  * Show a failure message for the given script.
@@ -31,38 +34,18 @@ function failScript(script, message) {
 // feature tests use.
 var asserts = {
 
+  assert: assert,
+
+  assertEquals: assert.equal,
+  assertFalse: assert.isFalse,
+  assertNotEquals: assert.notEqual,
+  assertNotNull: assert.isNotNull,
+  assertNotThrows: assert.doesNotThrow,
+  assertTrue: assert.isTrue,
+  assertUndefined: assert.isUndefined,
+
   fail: function(message) {
-    throw new UnitTestError(message);
-  },
-
-  assertEquals: function(expected, actual) {
-    if (actual !== expected) {
-      fail('Expected ' + expected + ' but was ' + actual + '.');
-    }
-  },
-
-  assertNotEquals: function(expected, actual) {
-    if (actual === expected) {
-      fail('Expected ' + expected + ' to not be ' + actual + '.');
-    }
-  },
-
-  assertNotNull: function(actual) {
-    if (actual === null) {
-      fail('Unexpected null.');
-    }
-  },
-
-  assertFalse: function(actual) {
-    assertEquals(false, actual);
-  },
-
-  assertTrue: function(actual) {
-    assertEquals(true, actual);
-  },
-
-  assertUndefined: function(actual) {
-    assertEquals(undefined, actual);
+    throw new chai.AssertionError({message: message});
   },
 
   assertThrows: function(fn) {
@@ -74,14 +57,6 @@ var asserts = {
     }
     fail('Function should have thrown and did not.');
   },
-
-  assertNotThrows: function(fn) {
-    try {
-      fn();
-    } catch (e) {
-      fail('Function should not have thrown.');
-    }
-  }
 };
 
 // Verifies that the reporter reported the expected errors.
@@ -186,7 +161,7 @@ function runCompiledTest(filePath, compiledCode) {
     ('global', eval)(compiledCode);
     return true;
   } catch (e) {
-    if (e instanceof UnitTestError) {
+    if (e instanceof chai.AssertionError) {
       failScript(filePath, e.message + '\n' + e.stack);
     } else if (e instanceof SyntaxError) {
       failScript(filePath,
@@ -290,10 +265,6 @@ function restoreConsole() {
   console.info = originalConsole.info;
   console.error = originalConsole.error;
   originalConsole = null;
-}
-
-function UnitTestError(message) {
-  this.message = message;
 }
 
 function print(s) {

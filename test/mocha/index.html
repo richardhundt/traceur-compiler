@@ -17,13 +17,13 @@ mocha.setup({ui: 'tdd'});
 var assert = chai.assert;
 
 // TODO(arv): Remove these aliases.
-var assertNotEquals = assert.notEqual;
 var assertEquals = assert.equal;
-var assertTrue = assert.isTrue;
 var assertFalse = assert.isFalse;
-var assertUndefined = assert.isUndefined;
+var assertNotEquals = assert.notEqual;
 var assertNotNull = assert.isNotNull;
 var assertNotThrows = assert.doesNotThrow;
+var assertTrue = assert.isTrue;
+var assertUndefined = assert.isUndefined;
 
 function fail(m) {
   throw new chai.AssertionError({message: m});
