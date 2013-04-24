@@ -54,79 +54,94 @@ function runCode(code, name) {
 
 function featureTest(url) {
   var urlOptions = {};
-  suite(url, function() {
-    test(url, function(done) {
 
-      var name = url;
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      var loadError = false;
-      xhr.onerror = function() {
-        fail('Load error');
-        loadError = true;
-      };
+  var name = url;
+  var loadError = false;
+  var loaded = false;
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.onerror = function() {
+    loadError = true;
+  };
+
+  xhr.onloadend = function() {
+    loaded = true;
+  };
+  xhr.send();
+
+  suite(name, function() {
+    test(name, function(done) {
+      if (loaded)
+        doTest(done);
       xhr.onloadend = function() {
-        if (loadError)
-          return;
-
-        var source = xhr.responseText;
-
-        traceur.options.debug = true;
-        traceur.options.freeVariableChecker = true;
-        traceur.options.validate = true;
-
-        var options = parseProlog(source);
-        var skip = options.skip;
-        var shouldCompile = options.shouldCompile;
-        var expectedErrors = options.expectedErrors;
-
-        try {
-          var reporter = new traceur.util.TestErrorReporter();
-          var sourceFile = new traceur.syntax.SourceFile(name, source);
-          var tree = traceur.codegeneration.Compiler.compileFile(reporter,
-                                                                 sourceFile,
-                                                                 url);
-          var code = traceur.outputgeneration.TreeWriter.write(tree);
-
-          if (!shouldCompile) {
-            assert.isTrue(reporter.hadError(),
-                'Expected error compiling ' + name + ', but got none.');
-
-            var missingExpectations = expectedErrors.forEach(function(expected) {
-              assert.isTrue(reporter.hasMatchingError(expected),
-                            'Missing expected error: ' + expected);
-            });
-
-            skip = true;
-          }
-
-          var CloneTreeTransformer = traceur.codegeneration.CloneTreeTransformer;
-
-          if (!skip) {
-              if (reporter.hadError()) {
-                fail('Error compiling ' + name + '.\n' +
-                     reporter.errors.join('\n'));
-                return;
-              }
-              if (urlOptions.testClone === 'true') {
-                var clone = CloneTreeTransformer.cloneTree(tree);
-                code = traceur.outputgeneration.TreeWriter.write(tree);
-                var cloneCode = traceur.outputgeneration.TreeWriter.write(clone);
-                assert.equal(code, cloneCode);
-              } else {
-                // Script compiled, so run it.
-                runCode(code, name);
-              }
-          }
-        } finally {
-          traceur.options.reset();
-        }
-
-        done();
+        doTest(done);
       };
-      xhr.send();
     });
   });
+
+  function doTest(done) {
+    if (loadError) {
+      fail('Load error');
+      done();
+      return;
+    }
+
+    var source = xhr.responseText;
+
+    traceur.options.debug = true;
+    traceur.options.freeVariableChecker = true;
+    traceur.options.validate = true;
+
+    var options = parseProlog(source);
+    var skip = options.skip;
+    var shouldCompile = options.shouldCompile;
+    var expectedErrors = options.expectedErrors;
+
+    try {
+      var reporter = new traceur.util.TestErrorReporter();
+      var sourceFile = new traceur.syntax.SourceFile(name, source);
+      var tree = traceur.codegeneration.Compiler.compileFile(reporter,
+                                                             sourceFile,
+                                                             url);
+      var code = traceur.outputgeneration.TreeWriter.write(tree);
+
+      if (!shouldCompile) {
+        assert.isTrue(reporter.hadError(),
+            'Expected error compiling ' + name + ', but got none.');
+
+        var missingExpectations = expectedErrors.forEach(function(expected) {
+          assert.isTrue(reporter.hasMatchingError(expected),
+                        'Missing expected error: ' + expected);
+        });
+
+        skip = true;
+      }
+
+      var CloneTreeTransformer = traceur.codegeneration.CloneTreeTransformer;
+
+      if (!skip) {
+          if (reporter.hadError()) {
+            fail('Error compiling ' + name + '.\n' +
+                 reporter.errors.join('\n'));
+            return;
+          }
+          if (urlOptions.testClone === 'true') {
+            var clone = CloneTreeTransformer.cloneTree(tree);
+            code = traceur.outputgeneration.TreeWriter.write(tree);
+            var cloneCode = traceur.outputgeneration.TreeWriter.write(clone);
+            assert.equal(code, cloneCode);
+          } else {
+            // Script compiled, so run it.
+            runCode(code, name);
+          }
+      }
+    } finally {
+      traceur.options.reset();
+    }
+
+    done();
+  };
 }
 
 
