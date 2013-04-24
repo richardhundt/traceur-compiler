@@ -84,7 +84,7 @@
   // Replace the Closure-provided array comparer with our own that doesn't barf
   // because Array.prototype has a __iterator__ method.
   function assertArrayEquals(expected, actual) {
-    assertEquals(JSON.stringify(expected, null, 2),
+    assert.equal(JSON.stringify(expected, null, 2),
                  JSON.stringify(actual, null, 2));
   }
 

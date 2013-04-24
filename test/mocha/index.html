@@ -39,13 +39,17 @@ function assertThrows(fn) {
 }
 
 </script>
-<script src="util/url.js"></script>
-<script src="util/ErrorReporter.js"></script>
+<script src="codegeneration/RuntimeInliner.js"></script>
+<script src="codegeneration/SourceMap.js"></script>
+<script src="codegeneration/low_level_tests.js"></script>
+<script src="codegeneration/writer.js"></script>
+<script src="semantics/VariableBinder.js"></script>
 <script src="syntax/LineNumbers.js"></script>
+<script src="syntax/ParseTreeValidator.js"></script>
 <script src="syntax/Token.js"></script>
 <script src="syntax/parser.js"></script>
-<script src="codegeneration/writer.js"></script>
-<div id="mocha"></div>
+<script src="util/ErrorReporter.js"></script>
+<script src="util/url.js"></script>
 <script>
 
 (function() {
@@ -162,19 +166,20 @@ function assertThrows(fn) {
     tree[suiteName].push({name: testName, path: path});
   });
 
-  suite('Feature Tests', function() {
-    for (var suiteName in tree) {
-      suite(suiteName, function() {
-        tree[suiteName].forEach(function(tuple) {
-          featureTest(tuple.name, '../feature/' + tuple.path);
-        });
-      });
-    }
-  });
+  // suite('Feature Tests', function() {
+  //   for (var suiteName in tree) {
+  //     suite(suiteName, function() {
+  //       tree[suiteName].forEach(function(tuple) {
+  //         featureTest(tuple.name, '../feature/' + tuple.path);
+  //       });
+  //     });
+  //   }
+  // });
 
 })();
 
 </script>
+<div id="mocha"></div>
 <script>
 
 mocha.run();

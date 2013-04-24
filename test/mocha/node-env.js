@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 global.chai = require('chai');
 global.assert = chai.assert;
 global.traceur = require('../../src/node/traceur.js');
+
+var testUtil = require('../test-utils.js');
+global.assertArrayEquals = testUtil.assertArrayEquals;
