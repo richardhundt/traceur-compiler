@@ -32,7 +32,7 @@ suite('Hello.js', function() {
       assert.equal('Hello World!', hello.textContent);
       done();
     });
-    iframe.src = '../../example/hello.html'
+    iframe.src = '../example/hello.html'
   });
 
 });

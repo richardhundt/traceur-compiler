@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<link rel="stylesheet" href="../../node_modules/mocha/mocha.css">
-<script src="../../node_modules/mocha/mocha.js"></script>
-<script src="../../node_modules/chai/chai.js"></script>
-<script src="../../bin/traceur.js"></script>
-<script src="../../src/bootstrap.js"></script>
-<script src="../test-utils.js"></script>
-<script src="../test-list.js"></script>
+<link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+<script src="../node_modules/mocha/mocha.js"></script>
+<script src="../node_modules/chai/chai.js"></script>
+<script src="../bin/traceur.js"></script>
+<script src="../src/bootstrap.js"></script>
+<script src="test-utils.js"></script>
+<script src="test-list.js"></script>
 <script>
 
 
 mocha.setup({ui: 'tdd'});
 
 </script>
-<script src="codegeneration/PlaceholderParser.traceur.js" type="text/traceur"></script>
-<script src="codegeneration/RuntimeInliner.js"></script>
-<script src="codegeneration/SourceMap.js"></script>
-<script src="codegeneration/low_level_tests.js"></script>
-<script src="codegeneration/writer.js"></script>
-<script src="runtime/modules.js"></script>
-<script src="semantics/FreeVariableChecker.traceur.js" type="text/traceur"  ></script>
-<script src="semantics/VariableBinder.js"></script>
-<script src="syntax/LineNumbers.js"></script>
-<script src="syntax/ParseTreeValidator.js"></script>
-<script src="syntax/Token.js"></script>
-<script src="syntax/parser.js"></script>
-<script src="system/Hello.js"></script>
-<script src="util/ErrorReporter.js"></script>
-<script src="util/url.js"></script>
+<script src="unit/codegeneration/PlaceholderParser.traceur.js" type="text/traceur"></script>
+<script src="unit/codegeneration/RuntimeInliner.js"></script>
+<script src="unit/codegeneration/SourceMap.js"></script>
+<script src="unit/codegeneration/low_level_tests.js"></script>
+<script src="unit/codegeneration/writer.js"></script>
+<script src="unit/runtime/modules.js"></script>
+<script src="unit/semantics/FreeVariableChecker.traceur.js" type="text/traceur"  ></script>
+<script src="unit/semantics/VariableBinder.js"></script>
+<script src="unit/syntax/LineNumbers.js"></script>
+<script src="unit/syntax/ParseTreeValidator.js"></script>
+<script src="unit/syntax/Token.js"></script>
+<script src="unit/syntax/parser.js"></script>
+<script src="unit/system/Hello.js"></script>
+<script src="unit/util/ErrorReporter.js"></script>
+<script src="unit/util/url.js"></script>
 <script>
 
 (function() {
@@ -158,7 +158,7 @@ mocha.setup({ui: 'tdd'});
     for (var suiteName in tree) {
       suite(suiteName, function() {
         tree[suiteName].forEach(function(tuple) {
-          featureTest(tuple.name, '../feature/' + tuple.path);
+          featureTest(tuple.name, 'feature/' + tuple.path);
         });
       });
     }

@@ -27,7 +27,7 @@ suite('modules.js', function() {
   if (typeof __filename !== 'undefined')
     url = __filename;
   else
-    url = traceur.util.resolveUrl(window.location.href, 'runtime/modules.js');
+    url = traceur.util.resolveUrl(window.location.href, 'unit/runtime/modules.js');
 
   function getLoader(opt_reporter) {
     var project = new traceur.semantics.symbols.Project(url);
