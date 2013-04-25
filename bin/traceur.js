@@ -18513,7 +18513,7 @@ var $___src_codegeneration_Compiler_js = (function() {
     return new Compiler(reporter, project).compile_();
   };
   Compiler.compileFile = function(reporter, sourceFile, url) {
-    var project = new Project(url);
+    var project = arguments[3] !== (void 0) ? arguments[3]: new Project(url);
     project.addFile(sourceFile);
     return new Compiler(reporter, project).compileFile_(sourceFile);
   };
@@ -18635,20 +18635,24 @@ var $___src_WebPageProject_js = (function() {
           var selector = 'script[type="text/traceur"]';
           var scripts = document.querySelectorAll(selector);
           if (!scripts.length) {
+            dispatchCompleteEvent();
             return;
           }
           this.addFilesFromScriptElements(scripts, (function() {
             var trees = this.compile();
             this.runInWebPage(trees);
-            var e = document.createEvent('Event');
-            e.initEvent('traceur-bootstrap-complete', false, false);
-            document.dispatchEvent(e);
+            dispatchCompleteEvent();
           }).bind(this));
         }).bind(this), false);
       }
     }, {}, $__proto, $__super, true);
     return $WebPageProject;
   }(Project);
+  function dispatchCompleteEvent() {
+    var e = document.createEvent('Event');
+    e.initEvent('traceur-bootstrap-complete', false, false);
+    document.dispatchEvent(e);
+  }
   return Object.preventExtensions(Object.create(null, {WebPageProject: {
       get: function() {
         return WebPageProject;

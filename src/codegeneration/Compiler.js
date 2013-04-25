@@ -176,8 +176,8 @@ Compiler.compile = function(reporter, project) {
  * @return {ParseTree} A map from input file name to
  *     translated results. Returns null if there was a compile error.
  */
-Compiler.compileFile = function(reporter, sourceFile, url) {
-  var project = new Project(url);
+Compiler.compileFile = function(reporter, sourceFile, url, project = new Project(url)) {
+  // var project = new Project(url);
   project.addFile(sourceFile);
   return new Compiler(reporter, project).compileFile_(sourceFile);
 };

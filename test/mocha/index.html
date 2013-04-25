@@ -79,20 +79,17 @@ function assertThrows(fn) {
     });
 
     var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onerror = function() {
+      loadError = true;
+    };
+
+    xhr.onloadend = function() {
+      loaded = true;
+    };
+    xhr.send();
 
     test(name, function(done) {
-
-      
-      xhr.open('GET', url, true);
-      xhr.onerror = function() {
-        loadError = true;
-      };
-
-      xhr.onloadend = function() {
-        loaded = true;
-      };
-      xhr.send();
-
       if (loaded) {
         doTest(done);
       } else {
@@ -123,9 +120,15 @@ function assertThrows(fn) {
       try {
         var reporter = new traceur.util.TestErrorReporter();
         var sourceFile = new traceur.syntax.SourceFile(name, source);
+
+        // TODO(arv): We really need a better way to generate unique names that
+        // works across multiple projects.
+        var project = new traceur.semantics.symbols.Project(url);
+        project.identifierGenerator.identifierIndex = Date.now();
         var tree = traceur.codegeneration.Compiler.compileFile(reporter,
                                                                sourceFile,
-                                                               url);
+                                                               url,
+                                                               project);
         var code = traceur.outputgeneration.TreeWriter.write(tree);
 
         if (!shouldCompile) {
@@ -181,8 +184,7 @@ function assertThrows(fn) {
     for (var suiteName in tree) {
       suite(suiteName, function() {
         tree[suiteName].forEach(function(tuple) {
-          // if (/Placeholder/.test(tuple.path))
-            featureTest(tuple.name, '../feature/' + tuple.path);
+          featureTest(tuple.name, '../feature/' + tuple.path);
         });
       });
     }
