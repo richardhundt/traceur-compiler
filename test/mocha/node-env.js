@@ -14,7 +14,9 @@
 
 global.chai = require('chai');
 global.assert = chai.assert;
-global.traceur = require('../../src/node/traceur.js');
+var traceur = global.traceur = require('../../src/node/traceur.js');
+
+traceur.require.makeDefault(/\.traceur\.js$/);
 
 require('../../src/node/module-load-override.js');
 

@@ -4,6 +4,7 @@
 <script src="../../node_modules/mocha/mocha.js"></script>
 <script src="../../node_modules/chai/chai.js"></script>
 <script src="../../bin/traceur.js"></script>
+<script src="../../src/bootstrap.js"></script>
 <script src="../test-utils.js"></script>
 <script src="../test-list.js"></script>
 <script>
@@ -39,18 +40,21 @@ function assertThrows(fn) {
 }
 
 </script>
+<script src="codegeneration/PlaceholderParser.traceur.js" type="text/traceur"></script>
 <script src="codegeneration/RuntimeInliner.js"></script>
 <script src="codegeneration/SourceMap.js"></script>
 <script src="codegeneration/low_level_tests.js"></script>
 <script src="codegeneration/writer.js"></script>
+<script src="runtime/modules.js"></script>
+<script src="semantics/FreeVariableChecker.traceur.js" type="text/traceur"  ></script>
 <script src="semantics/VariableBinder.js"></script>
 <script src="syntax/LineNumbers.js"></script>
 <script src="syntax/ParseTreeValidator.js"></script>
 <script src="syntax/Token.js"></script>
 <script src="syntax/parser.js"></script>
+<script src="system/Hello.js"></script>
 <script src="util/ErrorReporter.js"></script>
 <script src="util/url.js"></script>
-<script src="runtime/modules.js"></script>
 <script>
 
 (function() {
