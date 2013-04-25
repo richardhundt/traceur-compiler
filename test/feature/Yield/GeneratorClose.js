@@ -156,7 +156,7 @@ value = 'unmodified';
 
 assert.equal(10, g.next());
 assert.equal('unmodified', value);
-assertNotThrows(() => g.close());
+assert.doesNotThrow(() => g.close());
 assert.equal('finally run', value);
 assertClosed(g);
 
@@ -170,7 +170,7 @@ assert.equal(10, g.next());
 assert.equal('unmodified', value);
 assert.equal(22, g.throw(2));
 assert.equal('unmodified', value);
-assertNotThrows(() => g.close());
+assert.doesNotThrow(() => g.close());
 assert.equal('finally run', value);
 assertClosed(g);
 

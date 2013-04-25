@@ -28,7 +28,7 @@ function run(f) {
     while (dequeue()) {
       // intentionally empty
     }
-    assertTrue(done);
+    assert.isTrue(done);
   };
 }
 

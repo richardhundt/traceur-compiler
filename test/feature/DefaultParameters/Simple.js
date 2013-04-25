@@ -40,6 +40,6 @@ function h(a = 1, b) {
 
 assert.equal(1, h().a);
 assert.equal(2, h(2).a);
-assertUndefined(h().b);
-assertUndefined(h(2).b);
+assert.isUndefined(h().b);
+assert.isUndefined(h(2).b);
 assert.equal(4, h(3, 4).b);

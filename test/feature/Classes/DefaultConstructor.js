@@ -13,9 +13,9 @@ var c = new B(1, 2);
 assert.equal(1, c.x);
 assert.equal(2, c.y);
 
-assertFalse(
+assert.isFalse(
     Object.getOwnPropertyDescriptor(B.prototype, 'constructor').enumerable);
-assertFalse(
+assert.isFalse(
     Object.getOwnPropertyDescriptor(C.prototype, 'constructor').enumerable);
 
 // Ensure that we don't try to call super() in the default constructor.

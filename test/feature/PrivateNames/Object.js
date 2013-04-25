@@ -5,10 +5,10 @@ var n = new Name;
 var object = {};
 object[n] = 42;
 assert.equal(42, object[n]);
-assertUndefined(object[n.public]);
-assertUndefined(object[n + '']);
+assert.isUndefined(object[n.public]);
+assert.isUndefined(object[n + '']);
 assertArrayEquals([], Object.getOwnPropertyNames(object));
-assertFalse(object.hasOwnProperty(n));
+assert.isFalse(object.hasOwnProperty(n));
 
 assert.equal(32, object[n] -= 10);
 assert.equal(16, object[n] /= 2);

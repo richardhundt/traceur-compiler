@@ -12,15 +12,15 @@ var a, b, c, x, y, z;
 
 function checkA() {
   assert.equal(1, a);
-  assertUndefined(b);
-  assertUndefined(c);
+  assert.isUndefined(b);
+  assert.isUndefined(c);
   a = b = c = undefined;
 }
 
 function checkAb() {
   assert.equal(1, a);
   assert.equal(2, b);
-  assertUndefined(c);
+  assert.isUndefined(c);
   a = b = c = undefined;
 }
 

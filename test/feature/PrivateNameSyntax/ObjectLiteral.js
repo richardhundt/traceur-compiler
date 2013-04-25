@@ -29,7 +29,7 @@
     @a: 3
   };
 
-  assertTrue(objectWithProto instanceof Array);
+  assert.isTrue(objectWithProto instanceof Array);
   assert.equal(3, objectWithProto.@a);
 
 });

@@ -14,7 +14,7 @@ function test() {
 }
 
 test();
-assertFalse(finallyVisited);
+assert.isFalse(finallyVisited);
 d.callback(42)
 assert.equal(42, v);
-assertTrue(finallyVisited)
+assert.isTrue(finallyVisited)

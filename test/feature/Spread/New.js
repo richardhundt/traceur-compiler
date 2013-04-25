@@ -14,4 +14,4 @@ assert.equal(0, object.x);
 assert.equal(1, object.y);
 assert.equal(2, object.z);
 assert.equal(object, object.self);
-assertTrue(object instanceof object.F);
+assert.isTrue(object instanceof object.F);

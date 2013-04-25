@@ -112,7 +112,7 @@ for (var i = 0; i < 8; i++) {
   assertThrownErrorIs('Sent value to newborn generator', () => g.send(42));
 }
 
-assertNotThrows(() => assert.equal(1, g.send(undefined)));
+assert.doesNotThrow(() => assert.equal(1, g.send(undefined)));
 
 //-----------------------------------------------------------------------------
 //

@@ -13,6 +13,8 @@
 // limitations under the License.
 
 (function(exports) {
+  'use strict';
+
   function forEachPrologLine(s, f) {
     var inProlog = true;
     for (var i = 0; inProlog && i < s.length; ) {
@@ -53,6 +55,7 @@
     return returnValue;
   }
 
+  var assert = chai.assert;
 
   function assertNoOwnProperties(o) {
     var m = Object.getOwnPropertyNames(o);
@@ -88,10 +91,30 @@
                  JSON.stringify(actual, null, 2));
   }
 
+  function fail(message) {
+    throw new chai.AssertionError({message: message});
+  }
+
+  function assertThrows(fn) {
+    try {
+      fn();
+    } catch (e) {
+      // Do nothing.
+      return e;
+    }
+    fail('Function should have thrown and did not.');
+  }
+
+  var g = typeof global !== 'undefined' ? global : exports;
+
+  g.assert = assert;
+  g.assertArrayEquals = assertArrayEquals;
+  g.assertHasOwnProperty = assertHasOwnProperty;
+  g.assertLacksOwnProperty = assertLacksOwnProperty;
+  g.assertNoOwnProperties = assertNoOwnProperties;
+  g.assertThrows = assertThrows;
+  g.fail = fail;
+
   exports.parseProlog = parseProlog;
-  exports.assertNoOwnProperties = assertNoOwnProperties;
-  exports.assertHasOwnProperty = assertHasOwnProperty;
-  exports.assertLacksOwnProperty = assertLacksOwnProperty;
-  exports.assertArrayEquals = assertArrayEquals;
 
 })(typeof exports !== 'undefined' ? exports : this);

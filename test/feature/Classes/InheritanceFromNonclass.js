@@ -12,6 +12,6 @@ class NoClassB extends noClassA {
 // ----------------------------------------------------------------------------
 
 var b = new NoClassB;
-assertTrue(b instanceof noClassA);
+assert.isTrue(b instanceof noClassA);
 assert.equal('ma', b.ma());
 assert.equal('mb ma', b.mb());

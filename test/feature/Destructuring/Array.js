@@ -15,4 +15,4 @@ var result = destructArray();
 assert.equal('hello', result.a);
 assert.equal(',', result.b);
 assertArrayEquals(['world'], result.c);
-assertUndefined(result.d);
+assert.isUndefined(result.d);

@@ -92,11 +92,11 @@ function evalScript(urlOptions, url) {
       var code = traceur.outputgeneration.TreeWriter.write(tree);
 
       if (!shouldCompile) {
-        assertTrue('Expected error compiling ' + name + ', but got none.',
+        assert.isTrue('Expected error compiling ' + name + ', but got none.',
                    reporter.hadError());
 
         var missingExpectations = expectedErrors.forEach(function(expected) {
-          assertTrue('Missing expected error: ' + expected,
+          assert.isTrue('Missing expected error: ' + expected,
                      reporter.hasMatchingError(expected));
         });
 

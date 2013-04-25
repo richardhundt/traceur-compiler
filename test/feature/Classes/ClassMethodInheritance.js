@@ -20,4 +20,4 @@ class E {}
 
 assert.equal(Object.getPrototypeOf(E), Function.prototype);
 assert.equal(Object.getPrototypeOf(E.prototype), Object.prototype);
-assertFalse('keys' in E);
+assert.isFalse('keys' in E);

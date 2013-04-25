@@ -64,8 +64,8 @@ $traceurRuntime.setGeneratorReturn(function(v) { this.value = v; }, tmp);
 
 //----
 
-assertNotEquals(prevStopIteration, tmp.StopIteration);
-assertNotEquals(prevGeneratorReturn, $traceurRuntime.GeneratorReturn);
+assert.notEqual(prevStopIteration, tmp.StopIteration);
+assert.notEqual(prevGeneratorReturn, $traceurRuntime.GeneratorReturn);
 
 checkInvariants(tmp.StopIteration, $traceurRuntime.GeneratorReturn, true);
 

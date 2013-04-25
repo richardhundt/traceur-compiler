@@ -14,5 +14,5 @@ assert.equal(2, y);
 assert.equal(x, renamedX);
 assert.equal(x, m.x);
 // Closure tests cannot handle Object.create(null)
-assertTrue(m === m2);
+assert.isTrue(m === m2);
 assert.equal(y, m.y);

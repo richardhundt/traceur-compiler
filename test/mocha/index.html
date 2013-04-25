@@ -13,32 +13,6 @@
 mocha.setup({ui: 'tdd'});
 
 </script>
-<script>
-
-var assert = chai.assert;
-
-// TODO(arv): Remove these aliases.
-var assertFalse = assert.isFalse;
-var assertNotEquals = assert.notEqual;
-var assertNotNull = assert.isNotNull;
-var assertNotThrows = assert.doesNotThrow;
-var assertTrue = assert.isTrue;
-var assertUndefined = assert.isUndefined;
-
-function fail(m) {
-  throw new chai.AssertionError({message: m});
-}
-
-function assertThrows(fn) {
-  try {
-    fn();
-  } catch (ex) {
-    return ex;
-  }
-  fail('Expected function to throw');
-}
-
-</script>
 <script src="codegeneration/PlaceholderParser.traceur.js" type="text/traceur"></script>
 <script src="codegeneration/RuntimeInliner.js"></script>
 <script src="codegeneration/SourceMap.js"></script>

@@ -16,11 +16,9 @@
 
 var fs = require('fs');
 var path = require('path');
-var chai = require('chai');
-var assert = chai.assert;
+var chai = global.chai = require('chai');
 var testUtil = require('./test-utils.js');
 var testList;
-
 
 /**
  * Show a failure message for the given script.
@@ -29,34 +27,6 @@ function failScript(script, message) {
   clearLastLine();
   print(red('FAIL ') + script + '\n     ' + message + '\n\n');
 }
-
-// Define some rudimentary versions of the JSUnit assertions that the
-// feature tests use.
-var asserts = {
-
-  assert: assert,
-
-  assertFalse: assert.isFalse,
-  assertNotEquals: assert.notEqual,
-  assertNotNull: assert.isNotNull,
-  assertNotThrows: assert.doesNotThrow,
-  assertTrue: assert.isTrue,
-  assertUndefined: assert.isUndefined,
-
-  fail: function(message) {
-    throw new chai.AssertionError({message: message});
-  },
-
-  assertThrows: function(fn) {
-    try {
-      fn();
-    } catch (e) {
-      // Do nothing.
-      return e;
-    }
-    fail('Function should have thrown and did not.');
-  },
-};
 
 // Verifies that the reporter reported the expected errors.
 // Displays differences between actual and expected errors.
@@ -131,7 +101,7 @@ function testClone(tree, originalSource) {
   function CheckingTagsVisitor(){}
   CheckingTagsVisitor.prototype = Object.create(traceur.syntax.ParseTreeVisitor.prototype);
   CheckingTagsVisitor.visitAny = function(tree) {
-    assertUndefined(tree.tagged);
+    assert.isUndefined(tree.tagged);
   }
 
   var tagged = (new TaggingVisitor).transformAny(cloneTree);
@@ -302,17 +272,6 @@ function runTestScripts(dir, basePath) {
     }
   }
 }
-
-// Add assert methods to global so that our FreeVariableChecker does not think
-// they are undefined.
-for (var key in asserts) {
-  global[key] = asserts[key];
-}
-global.assertNoOwnProperties = testUtil.assertNoOwnProperties;
-global.assertHasOwnProperty = testUtil.assertHasOwnProperty;
-global.assertLacksOwnProperty = testUtil.assertLacksOwnProperty;
-global.assertArrayEquals = testUtil.assertArrayEquals;
-
 
 // Load the compiler.
 var traceur = require('../src/node/traceur.js');

@@ -21,7 +21,7 @@ function destructObject() {
 var result = destructObject();
 assert.equal(7, result.a);
 assert.equal(8, result.b);
-assertUndefined(result.c);
+assert.isUndefined(result.c);
 assert.equal(11, result.d);
 
 var {0: x, '1': y, length: z} = [0, 1, 2, 3];

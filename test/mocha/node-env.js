@@ -12,18 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-global.chai = require('chai');
-global.assert = chai.assert;
 var traceur = global.traceur = require('../../src/node/traceur.js');
+global.chai = require('chai');
+var testUtil = require('../test-utils.js');
 
 traceur.require.makeDefault(/\.traceur\.js$/);
 
 require('../../src/node/module-load-override.js');
-
-var testUtil = require('../test-utils.js');
-global.assertArrayEquals = testUtil.assertArrayEquals;
-
-// TODO(arv): Put in a single location.
-global.fail = function(message) {
-  throw new chai.AssertionError({message: message});
-};

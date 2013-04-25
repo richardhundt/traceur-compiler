@@ -35,10 +35,10 @@ assertArrayEquals([
 ], Object.keys(object));
 
 function assertMethod(object, name) {
-  assertTrue(object.hasOwnProperty(name));
+  assert.isTrue(object.hasOwnProperty(name));
   var descriptor = Object.getOwnPropertyDescriptor(object, name);
   assert.equal('object', typeof descriptor);
-  assertTrue(descriptor.enumerable);
+  assert.isTrue(descriptor.enumerable);
   assert.equal('function', typeof object[name]);
   assert.equal('', object[name].name);
 }

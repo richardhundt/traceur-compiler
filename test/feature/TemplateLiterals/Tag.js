@@ -2,24 +2,24 @@
 
 {
   function expose(callSite, var_args) {
-    assertTrue(Array.isArray(callSite));
-    assertTrue(Object.isFrozen(callSite));
+    assert.isTrue(Array.isArray(callSite));
+    assert.isTrue(Object.isFrozen(callSite));
     var rawDescr = Object.getOwnPropertyDescriptor(callSite, 'raw');
-    assertTrue(rawDescr !== undefined);
-    assertTrue('value' in rawDescr);
-    assertFalse(rawDescr.enumerable);
-    assertFalse(rawDescr.writable);
-    assertFalse(rawDescr.configurable);
-    assertTrue(Object.isFrozen(callSite.raw));
-    assertTrue(Array.isArray(callSite.raw));
-    assertTrue(Object.isFrozen(callSite.raw));
+    assert.isTrue(rawDescr !== undefined);
+    assert.isTrue('value' in rawDescr);
+    assert.isFalse(rawDescr.enumerable);
+    assert.isFalse(rawDescr.writable);
+    assert.isFalse(rawDescr.configurable);
+    assert.isTrue(Object.isFrozen(callSite.raw));
+    assert.isTrue(Array.isArray(callSite.raw));
+    assert.isTrue(Object.isFrozen(callSite.raw));
     assert.equal(callSite.raw.length, callSite.length);
 
     // The number of the literal portions is always same or one greater than the
     // number of substitutions
     var literalPortionCount = callSite.raw.length;
     var substitutionCount = arguments.length - 1;
-    assertTrue(literalPortionCount == substitutionCount ||
+    assert.isTrue(literalPortionCount == substitutionCount ||
                literalPortionCount == substitutionCount + 1);
 
     return arguments;

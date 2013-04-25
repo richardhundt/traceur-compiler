@@ -36,15 +36,15 @@ import {elementGet, elementSet, elementDelete} from '@name';
     return true;
   };
 
-  assertTrue(delete object[0]);
-  assertTrue(delete object[null]);
-  assertTrue(delete object[undefined]);
-  assertTrue(delete object[true]);
-  assertTrue(delete object[false]);
-  assertTrue(delete object[tmp]);
-  assertTrue(delete object[f]);
-  assertTrue(delete object[re]);
-  assertTrue(delete object.shouldNotCallCollectionSetter);
+  assert.isTrue(delete object[0]);
+  assert.isTrue(delete object[null]);
+  assert.isTrue(delete object[undefined]);
+  assert.isTrue(delete object[true]);
+  assert.isTrue(delete object[false]);
+  assert.isTrue(delete object[tmp]);
+  assert.isTrue(delete object[f]);
+  assert.isTrue(delete object[re]);
+  assert.isTrue(delete object.shouldNotCallCollectionSetter);
 
   assertArrayEquals([0, null, undefined, true, false, tmp, f, re], deleteLog);
 
