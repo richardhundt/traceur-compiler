@@ -13,7 +13,7 @@
     assertTrue(Object.isFrozen(callSite.raw));
     assertTrue(Array.isArray(callSite.raw));
     assertTrue(Object.isFrozen(callSite.raw));
-    assertEquals(callSite.raw.length, callSite.length);
+    assert.equal(callSite.raw.length, callSite.length);
 
     // The number of the literal portions is always same or one greater than the
     // number of substitutions
@@ -28,16 +28,16 @@
   let x = 3;
   let y = 5;
 
-  assertEquals(1, expose``.length);
-  assertEquals(1, expose`a`.length);
-  assertEquals(2, expose`a${x}`.length);
-  assertEquals(2, expose`a${x} b`.length);
-  assertEquals(3, expose`a${x} ${y}`.length);
-  assertEquals(3, expose`${x}${y}`.length);
-  assertEquals(2, expose`${x}a`.length);
+  assert.equal(1, expose``.length);
+  assert.equal(1, expose`a`.length);
+  assert.equal(2, expose`a${x}`.length);
+  assert.equal(2, expose`a${x} b`.length);
+  assert.equal(3, expose`a${x} ${y}`.length);
+  assert.equal(3, expose`${x}${y}`.length);
+  assert.equal(2, expose`${x}a`.length);
 
-  assertEquals(1, expose``[0].length);
-  assertEquals(1, expose``[0].raw.length);
+  assert.equal(1, expose``[0].length);
+  assert.equal(1, expose``[0].raw.length);
 
   assertArrayEquals(['a'], expose`a`[0].raw);
   assertArrayEquals(['a'], expose`a`[0]);

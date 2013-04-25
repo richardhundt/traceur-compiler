@@ -44,6 +44,7 @@ suite('FreeVariableChecker.traceur.js', function() {
   }
 
   function assertCompileError(contents, expectedError, expectedErrorArg) {
+    traceur.options.freeVariableChecker = true;
     var errors = compileAndReturnErrors(contents, 'code');
     assertErrorMessage(errors, expectedError, expectedErrorArg);
   }

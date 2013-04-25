@@ -22,7 +22,7 @@ class ElementHolder {
 var obj = new ElementHolder();
 
 obj.element = 40;
-assertEquals(40, obj.getElement());
+assert.equal(40, obj.getElement());
 assertTrue(obj.makeFilterCapturedThis()(40));
 
 // http://code.google.com/p/v8/issues/detail?id=1381

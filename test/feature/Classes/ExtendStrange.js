@@ -8,7 +8,7 @@ assertFalse(c instanceof Object);
 assertTrue(Object.getPrototypeOf(c) === C.prototype);
 assertTrue(Object.getPrototypeOf(Object.getPrototypeOf(c)) === null);
 
-assertEquals(c.toString, undefined);
+assert.equal(c.toString, undefined);
 
 class D extends null {
   constructor(...args) {
@@ -40,7 +40,7 @@ class F extends f {
   }
 }
 
-assertEquals(1, new F().x);
+assert.equal(1, new F().x);
 
 
 function g() {}
@@ -52,4 +52,4 @@ class G extends g {
   }
 }
 
-assertEquals(2, new G().x);
+assert.equal(2, new G().x);

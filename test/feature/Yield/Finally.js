@@ -23,7 +23,7 @@ function* test() {
 }
 
 var it = test();
-assertEquals(42, it.next());
+assert.equal(42, it.next());
 assertFalse(finallyVisited);
 
 assertThrowsStopIteration(() => it.next());
@@ -31,6 +31,6 @@ assertTrue(finallyVisited);
 
 finallyVisited = false;
 for (var i of test()) {
-  assertEquals(42, i);
+  assert.equal(42, i);
 }
 assertTrue(finallyVisited);

@@ -9,7 +9,7 @@ var e = new Empty();
 assertNotNull(e);
 
 for (var element in e) {
-  assertEquals('constructor', element);
+  assert.equal('constructor', element);
 }
 
 for (var element in Empty) {

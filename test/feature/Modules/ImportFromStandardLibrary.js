@@ -10,6 +10,6 @@ assertTrue(isName(n1));
 assertTrue(isName(n2));
 assertTrue(isName(n3));
 
-assertEquals(Name, create);
-assertEquals(n.Name, Name);
-assertEquals(isName, isName);
+assert.equal(Name, create);
+assert.equal(n.Name, Name);
+assert.equal(isName, isName);

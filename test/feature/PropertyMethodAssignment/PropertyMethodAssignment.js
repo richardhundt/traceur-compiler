@@ -37,10 +37,10 @@ assertArrayEquals([
 function assertMethod(object, name) {
   assertTrue(object.hasOwnProperty(name));
   var descriptor = Object.getOwnPropertyDescriptor(object, name);
-  assertEquals('object', typeof descriptor);
+  assert.equal('object', typeof descriptor);
   assertTrue(descriptor.enumerable);
-  assertEquals('function', typeof object[name]);
-  assertEquals('', object[name].name);
+  assert.equal('function', typeof object[name]);
+  assert.equal('', object[name].name);
 }
 
 assertMethod(object, 'f');
@@ -54,7 +54,7 @@ assertMethod(object, 'function');
 assertMethod(object, 'var');
 assertMethod(object, 'class');
 
-assertEquals(object.f, object.f());
+assert.equal(object.f, object.f());
 
 // Test the nested object.
 assertArrayEquals(['j'], Object.keys(object.x));
@@ -67,4 +67,4 @@ class C {
     return m;
   }
 }
-assertEquals(42, new C().m())
+assert.equal(42, new C().m())

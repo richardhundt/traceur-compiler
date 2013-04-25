@@ -131,9 +131,9 @@ g = W(G2)();
 // the last 'yield' with a 'throw x' and calling next() on that generator. So
 // it could either throw an exception, or return a value, depending on the
 // flow of control.
-assertEquals(1, g.next());
-assertEquals('(22)', g.throw(22));
-assertEquals(3, g.next());
+assert.equal(1, g.next());
+assert.equal('(22)', g.throw(22));
+assert.equal(3, g.next());
 
 assertThrownEquals(44, () => g.throw(44));
 assertClosed(g);
@@ -153,7 +153,7 @@ g = W(G3)();
 // Note: this behavior differs from ionmonkey, which throws 'undefined', and
 // not StopIteration, but the StopIteration behavior better matches what I'd
 // expect, given the description from the previous test.
-assertEquals(1, g.next());
+assert.equal(1, g.next());
 assertThrowsStopIteration(() => g.throw(44));
 assertClosed(g);
 

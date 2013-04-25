@@ -82,15 +82,15 @@ function* G2() {
 var closeMethods = [
   (g) => g.close(),
   (g) => {
-    assertEquals(1, g.next());
+    assert.equal(1, g.next());
     g.close();
   },
   (g) => {
-    assertEquals(1, g.next());
+    assert.equal(1, g.next());
     assertThrownEquals(42, () => g.throw(42));
   },
   (g) => {
-    assertEquals(1, g.next());
+    assert.equal(1, g.next());
     assertThrowsStopIteration(() => g.next());
   }
 ];
@@ -99,7 +99,7 @@ closeMethods.forEach((closeMethod) => {
   g = W(G2)();
   closeMethod(g);
   for (var i = 0; i < 8; i++) {
-    assertEquals(undefined, g.close());
+    assert.equal(undefined, g.close());
   }
 });
 
@@ -139,7 +139,7 @@ g = W(G3)();
 value = 'unmodified';
 
 g.close();
-assertEquals('unmodified', value);
+assert.equal('unmodified', value);
 assertClosed(g);
 
 //-----------------------------------------------------------------------------
@@ -154,10 +154,10 @@ assertClosed(g);
 g = W(G3)();
 value = 'unmodified';
 
-assertEquals(10, g.next());
-assertEquals('unmodified', value);
+assert.equal(10, g.next());
+assert.equal('unmodified', value);
 assertNotThrows(() => g.close());
-assertEquals('finally run', value);
+assert.equal('finally run', value);
 assertClosed(g);
 
 
@@ -166,12 +166,12 @@ assertClosed(g);
 g = W(G3)();
 value = 'unmodified';
 
-assertEquals(10, g.next());
-assertEquals('unmodified', value);
-assertEquals(22, g.throw(2));
-assertEquals('unmodified', value);
+assert.equal(10, g.next());
+assert.equal('unmodified', value);
+assert.equal(22, g.throw(2));
+assert.equal('unmodified', value);
 assertNotThrows(() => g.close());
-assertEquals('finally run', value);
+assert.equal('finally run', value);
 assertClosed(g);
 
 //----
@@ -181,10 +181,10 @@ g = W(G3)();
 value = 'unmodified';
 finallyAction = 'throw';
 
-assertEquals(10, g.next());
-assertEquals('unmodified', value);
+assert.equal(10, g.next());
+assert.equal('unmodified', value);
 assertThrownEquals('throw requested', () => g.close());
-assertEquals('finally run', value);
+assert.equal('finally run', value);
 assertClosed(g);
 
 //----
@@ -193,12 +193,12 @@ g = W(G3)();
 value = 'unmodified';
 finallyAction = 'throw';
 
-assertEquals(10, g.next());
-assertEquals('unmodified', value);
-assertEquals(22, g.throw(2));
-assertEquals('unmodified', value);
+assert.equal(10, g.next());
+assert.equal('unmodified', value);
+assert.equal(22, g.throw(2));
+assert.equal('unmodified', value);
 assertThrownEquals('throw requested', () => g.close());
-assertEquals('finally run', value);
+assert.equal('finally run', value);
 assertClosed(g);
 
 }); // end wrap_forEach

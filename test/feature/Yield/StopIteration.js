@@ -44,7 +44,7 @@ $traceurRuntime.setStopIteration(tmpStopIteration, tmp);
 
 //----
 
-assertEquals(tmpStopIteration, tmp.StopIteration);
+assert.equal(tmpStopIteration, tmp.StopIteration);
 checkInvariants(tmp.StopIteration, $traceurRuntime.GeneratorReturn, false);
 
 //-----------------------------------------------------------------------------

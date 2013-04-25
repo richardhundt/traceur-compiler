@@ -18,7 +18,6 @@ mocha.setup({ui: 'tdd'});
 var assert = chai.assert;
 
 // TODO(arv): Remove these aliases.
-var assertEquals = assert.equal;
 var assertFalse = assert.isFalse;
 var assertNotEquals = assert.notEqual;
 var assertNotNull = assert.isNotNull;
@@ -75,18 +74,25 @@ function assertThrows(fn) {
     var loadError = false;
     var loaded = false;
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.onerror = function() {
-      loadError = true;
-    };
+    teardown(function() {
+      traceur.options.reset();
+    });
 
-    xhr.onloadend = function() {
-      loaded = true;
-    };
-    xhr.send();
+    var xhr = new XMLHttpRequest();
 
     test(name, function(done) {
+
+      
+      xhr.open('GET', url, true);
+      xhr.onerror = function() {
+        loadError = true;
+      };
+
+      xhr.onloadend = function() {
+        loaded = true;
+      };
+      xhr.send();
+
       if (loaded) {
         doTest(done);
       } else {
@@ -171,15 +177,16 @@ function assertThrows(fn) {
     tree[suiteName].push({name: testName, path: path});
   });
 
-  // suite('Feature Tests', function() {
-  //   for (var suiteName in tree) {
-  //     suite(suiteName, function() {
-  //       tree[suiteName].forEach(function(tuple) {
-  //         featureTest(tuple.name, '../feature/' + tuple.path);
-  //       });
-  //     });
-  //   }
-  // });
+  suite('Feature Tests', function() {
+    for (var suiteName in tree) {
+      suite(suiteName, function() {
+        tree[suiteName].forEach(function(tuple) {
+          // if (/Placeholder/.test(tuple.path))
+            featureTest(tuple.name, '../feature/' + tuple.path);
+        });
+      });
+    }
+  });
 
 })();
 
@@ -187,6 +194,8 @@ function assertThrows(fn) {
 <div id="mocha"></div>
 <script>
 
-mocha.run();
+document.addEventListener('traceur-bootstrap-complete', function() {
+  mocha.run();
+});
 
 </script>

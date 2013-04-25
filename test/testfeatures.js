@@ -36,7 +36,6 @@ var asserts = {
 
   assert: assert,
 
-  assertEquals: assert.equal,
   assertFalse: assert.isFalse,
   assertNotEquals: assert.notEqual,
   assertNotNull: assert.isNotNull,
@@ -118,7 +117,7 @@ function testClone(tree, originalSource) {
   var cloneTree = CloneTreeTransformer.cloneTree(tree);
   var cloneGeneratedSource =
       traceur.outputgeneration.TreeWriter.write(cloneTree);
-  assertEquals(originalSource, cloneGeneratedSource);
+  assert.equal(originalSource, cloneGeneratedSource);
 
   function TaggingVisitor(){}
   TaggingVisitor.prototype = Object.create(traceur.codegeneration.ParseTreeTransformer.prototype);

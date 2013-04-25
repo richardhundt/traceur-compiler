@@ -18640,6 +18640,9 @@ var $___src_WebPageProject_js = (function() {
           this.addFilesFromScriptElements(scripts, (function() {
             var trees = this.compile();
             this.runInWebPage(trees);
+            var e = document.createEvent('Event');
+            e.initEvent('traceur-bootstrap-complete', false, false);
+            document.dispatchEvent(e);
           }).bind(this));
         }).bind(this), false);
       }

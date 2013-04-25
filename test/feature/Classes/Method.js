@@ -7,7 +7,7 @@ class Universe {
 // ----------------------------------------------------------------------------
 
 var universe = new Universe();
-assertEquals(42, universe.answer());
+assert.equal(42, universe.answer());
 
 var keys = [];
 for (var key in universe) {

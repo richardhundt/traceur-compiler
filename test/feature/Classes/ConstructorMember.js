@@ -9,7 +9,7 @@ class DerivedConstructorMember extends ConstructorMember {
 // ----------------------------------------------------------------------------
 
 var cm = new ConstructorMember;
-assertEquals(cm.constructor, ConstructorMember.prototype.constructor);
+assert.equal(cm.constructor, ConstructorMember.prototype.constructor);
 assertTrue(ConstructorMember.prototype.hasOwnProperty('constructor'));
 
 for (var key in ConstructorMember) {
@@ -17,7 +17,7 @@ for (var key in ConstructorMember) {
 }
 
 var dcm = new DerivedConstructorMember;
-assertEquals(dcm.constructor, DerivedConstructorMember.prototype.constructor);
+assert.equal(dcm.constructor, DerivedConstructorMember.prototype.constructor);
 assertTrue(DerivedConstructorMember.prototype.hasOwnProperty('constructor'));
 
 for (var key in DerivedConstructorMember) {
