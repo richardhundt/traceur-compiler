@@ -16,5 +16,12 @@ global.chai = require('chai');
 global.assert = chai.assert;
 global.traceur = require('../../src/node/traceur.js');
 
+require('../../src/node/module-load-override.js');
+
 var testUtil = require('../test-utils.js');
 global.assertArrayEquals = testUtil.assertArrayEquals;
+
+// TODO(arv): Put in a single location.
+global.fail = function(message) {
+  throw new chai.AssertionError({message: message});
+};
