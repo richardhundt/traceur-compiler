@@ -27,6 +27,7 @@ mocha.setup({ui: 'tdd'});
 <script src="unit/system/Hello.js"></script>
 <script src="unit/util/ErrorReporter.js"></script>
 <script src="unit/util/url.js"></script>
+<div id="mocha"></div>
 <script>
 
 (function() {
@@ -43,145 +44,15 @@ mocha.setup({ui: 'tdd'});
     return options;
   }
 
+  var loader = traceur.modules.internals.InternalLoader.fileLoader;
   var urlOptions = optionsOnURL();
 
-  function runCode(code, name) {
-    try {
-      ('global', eval)(code);
-    } catch (e) {
-      fail('Error running compiled output for : ' + name + '\n' + e + '\n' +
-           code);
-    }
-  }
+  featureSuite(testList, loader, urlOptions);
 
-  function featureTest(name, url) {
-    var loadError = false;
-    var loaded = false;
-
-    teardown(function() {
-      traceur.options.reset();
-    });
-
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.onerror = function() {
-      loadError = true;
-    };
-
-    xhr.onloadend = function() {
-      loaded = true;
-    };
-    xhr.send();
-
-    test(name, function(done) {
-      if (loaded) {
-        doTest(done);
-      } else {
-        xhr.onloadend = function() {
-          doTest(done);
-        };
-      }
-    });
-
-    function doTest(done) {
-      if (loadError) {
-        fail('Load error');
-        done();
-        return;
-      }
-
-      var source = xhr.responseText;
-
-      traceur.options.debug = true;
-      traceur.options.freeVariableChecker = true;
-      traceur.options.validate = true;
-
-      var options = parseProlog(source);
-      var skip = options.skip;
-      var shouldCompile = options.shouldCompile;
-      var expectedErrors = options.expectedErrors;
-
-      try {
-        var reporter = new traceur.util.TestErrorReporter();
-        var sourceFile = new traceur.syntax.SourceFile(name, source);
-
-        // TODO(arv): We really need a better way to generate unique names that
-        // works across multiple projects.
-        var project = new traceur.semantics.symbols.Project(url);
-        project.identifierGenerator.identifierIndex = Date.now();
-        var tree = traceur.codegeneration.Compiler.compileFile(reporter,
-                                                               sourceFile,
-                                                               url,
-                                                               project);
-        var code = traceur.outputgeneration.TreeWriter.write(tree);
-
-        if (!shouldCompile) {
-          assert.isTrue(reporter.hadError(),
-              'Expected error compiling ' + name + ', but got none.');
-
-          var missingExpectations = expectedErrors.forEach(function(expected) {
-            assert.isTrue(reporter.hasMatchingError(expected),
-                          'Missing expected error: ' + expected);
-          });
-
-          skip = true;
-        }
-
-        var CloneTreeTransformer = traceur.codegeneration.CloneTreeTransformer;
-
-        if (!skip) {
-            if (reporter.hadError()) {
-              fail('Error compiling ' + name + '.\n' +
-                   reporter.errors.join('\n'));
-              return;
-            }
-            if (urlOptions.testClone === 'true') {
-              var clone = CloneTreeTransformer.cloneTree(tree);
-              code = traceur.outputgeneration.TreeWriter.write(tree);
-              var cloneCode = traceur.outputgeneration.TreeWriter.write(clone);
-              assert.equal(code, cloneCode);
-            } else {
-              // Script compiled, so run it.
-              runCode(code, name);
-            }
-        }
-      } finally {
-        traceur.options.reset();
-      }
-
-      done();
-    }
-  }
-
-  // Bucket tests.
-  var tree = {};
-  testList.forEach(function(path) {
-    var parts = path.split('/');
-    var suiteName = parts.slice(0, -1).join(' ');
-    var testName = parts[parts.length - 1];
-    if (!tree[suiteName])
-      tree[suiteName] = [];
-    tree[suiteName].push({name: testName, path: path});
-  });
-
-  suite('Feature Tests', function() {
-    for (var suiteName in tree) {
-      suite(suiteName, function() {
-        tree[suiteName].forEach(function(tuple) {
-          featureTest(tuple.name, 'feature/' + tuple.path);
-        });
-      });
-    }
+  new traceur.WebPageProject(document.location.href).run(function() {
+    mocha.run();
   });
 
 })();
-
-</script>
-<div id="mocha"></div>
-<script>
-
-new traceur.WebPageProject(document.location.href).run(function() {
-  mocha.run();
-});
 
 </script>
