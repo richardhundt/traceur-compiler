@@ -33,6 +33,19 @@ mocha.setup({ui: 'tdd'});
 (function() {
   'use strict';
 
+  function optionsOnURL() {
+    var params = window.location.search.substring(1);
+    var nameValuePairs = params.split('&');
+    var options = {};
+    nameValuePairs.forEach(function(pair){
+      var segments = pair.split('=');
+      options[segments[0]] = segments[1];
+    });
+    return options;
+  }
+
+  var urlOptions = optionsOnURL();
+
   function runCode(code, name) {
     try {
       ('global', eval)(code);
@@ -43,8 +56,6 @@ mocha.setup({ui: 'tdd'});
   }
 
   function featureTest(name, url) {
-    var urlOptions = {};
-
     var loadError = false;
     var loaded = false;
 
