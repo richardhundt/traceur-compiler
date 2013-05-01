@@ -177,9 +177,3 @@ export class WebPageProject extends Project {
     }, false);
   }
 }
-
-function dispatchCompleteEvent() {
-  var e = document.createEvent('Event');
-  e.initEvent('traceur-bootstrap-complete', false, false);
-  document.dispatchEvent(e);
-}

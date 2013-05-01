@@ -4,7 +4,6 @@
 <script src="../node_modules/mocha/mocha.js"></script>
 <script src="../node_modules/chai/chai.js"></script>
 <script src="../bin/traceur.js"></script>
-<script src="../src/bootstrap.js"></script>
 <script src="test-utils.js"></script>
 <script src="test-list.js"></script>
 <script>
@@ -181,7 +180,7 @@ mocha.setup({ui: 'tdd'});
 <div id="mocha"></div>
 <script>
 
-document.addEventListener('traceur-bootstrap-complete', function() {
+new traceur.WebPageProject(document.location.href).run(function() {
   mocha.run();
 });
 
