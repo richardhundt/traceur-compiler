@@ -23,6 +23,7 @@ import {ProgramTransformer} from '../codegeneration/ProgramTransformer.js';
 import {Project} from '../semantics/symbols/Project.js';
 import {SourceFile} from '../syntax/SourceFile.js';
 import {TreeWriter} from '../outputgeneration/TreeWriter.js';
+import {WebLoader} from './WebLoader.js';
 import {getUid} from '../util/uid.js';
 import {resolveUrl} from '../util/url.js';
 import {
@@ -261,7 +262,6 @@ class EvalLoadCodeUnit extends CodeUnit {
   }
 }
 
-
 /**
  * The internal implementation of the code loader.
  */
@@ -283,33 +283,11 @@ class InternalLoader {
   }
 
   loadTextFile(url, callback, errback) {
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-      if (xhr.status == 200 || xhr.status == 0) {
-        callback(xhr.responseText);
-      } else {
-        errback();
-      }
-      xhr = null;
-    };
-    xhr.onerror = function() {
-      errback();
-    };
-    xhr.open('GET', url, true);
-    xhr.send();
-    return xhr;
+    return InternalLoader.fileLoader.load(url, callback, errback);
   }
 
   loadTextFileSync(url) {
-    var xhr = new XMLHttpRequest();
-    xhr.onerror = function(e) {
-      throw new Error(xhr.statusText);
-    };
-    xhr.open('GET', url, false);
-    xhr.send();
-    if (xhr.status == 200 || xhr.status == 0) {
-      return xhr.responseText;
-    }
+    return InternalLoader.fileLoader.loadSync(url);
   }
 
   load(url) {
@@ -332,7 +310,7 @@ class InternalLoader {
       return codeUnit;
     }
     var loader = this;
-    codeUnit.xhr = this.loadTextFile(url, function(text) {
+    codeUnit.abort = this.loadTextFile(url, function(text) {
       codeUnit.text = text;
       codeUnit.state = LOADED;
       loader.handleCodeUnitLoaded(codeUnit);
@@ -429,8 +407,8 @@ class InternalLoader {
    */
   abortAll() {
     this.cache.values().forEach((codeUnit) => {
-      if (codeUnit.xhr) {
-        codeUnit.xhr.abort();
+      if (codeUnit.abort) {
+        codeUnit.abort();
         codeUnit.state = ERROR;
       }
     });
@@ -555,7 +533,17 @@ class InternalLoader {
     return ('global', eval)("'use strict';" +
         TreeWriter.write(codeUnit.transformedTree));
   }
+
+  static set fileLoader(v) {
+    fileLoader = v;
+  }
+
+  static get fileLoader() {
+    return fileLoader;
+  }
 }
+
+var fileLoader = new WebLoader();
 
 export class CodeLoader {
   /**

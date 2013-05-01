@@ -14,6 +14,7 @@
 
 var fs = require('fs');
 var path = require('path');
+require('./module-load-override.js');
 
 var generateNameForUrl = traceur.generateNameForUrl;
 var ErrorReporter = traceur.util.ErrorReporter;
@@ -123,33 +124,6 @@ InlineCodeLoader.prototype = {
     if (codeUnit === startCodeUnit)
       return tree;
     return wrapProgram(tree, codeUnit.url, this.dirname);
-  },
-
-  loadTextFile: function(filename, callback, errback) {
-    var text;
-    fs.readFile(path.resolve(this.dirname, filename), 'utf8',
-        function(err, data) {
-          if (err) {
-            errback(err);
-          } else {
-            // Ignore shebang lines
-            if (/^#!/.test(data))
-              data = '//' + data;
-            text = data;
-            callback(data);
-          }
-        });
-
-    return {
-      get responseText() {
-        return text;
-      },
-      abort: function() {}
-    };
-  },
-
-  loadTextFileSync: function(url) {
-    return fs.readFileSync(url, 'utf8');
   }
 };
 
