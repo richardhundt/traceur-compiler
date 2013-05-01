@@ -26,22 +26,12 @@ suite('SourceMap.js', function() {
   function parse(name, source) {
     var sourceFile = new traceur.syntax.SourceFile(name, source);
     var parser = new traceur.syntax.Parser(errorReporter, sourceFile);
-    console.log('Parsing', name);
-
     var tree = parser.parseProgram();
     return tree;
   }
 
   test('SourceMap', function() {
-
-    function dumpLine(line, number) {
-        console.log( (number +1 ) + ': ' + line);
-    }
-
     var src = 'function foo() { return 5; }\nvar \nf\n=\n5\n;\n';
-
-    console.log('original:');
-    src.split('\n').forEach(dumpLine);
 
     var filename = 'sourceMapThis.js';
     var tree = parse(filename, src);
@@ -57,9 +47,6 @@ suite('SourceMap.js', function() {
     var generator = new SourceMapGenerator({file: filename});
     var options = {sourceMapGenerator: generator, showLineNumbers: false};
     var actual = TreeWriter.write(tree, options);
-
-    console.log('generated:');
-    actual.split('\n').forEach(dumpLine);
 
     var consumer = new SourceMapConsumer(options.sourceMap);
 

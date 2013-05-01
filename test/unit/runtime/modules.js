@@ -86,7 +86,7 @@ suite('modules.js', function() {
         '\n' +
         '[\'test\', SYNTAX ERROR a.name, b.name, c.name];\n';
 
-    var reporter = new traceur.util.ErrorReporter();
+    var reporter = new traceur.util.MutedErrorReporter();
 
     var result = getLoader(reporter).evalLoad(code, function(value) {
       fail('Should not have succeeded');
